@@ -1,0 +1,64 @@
+doctype html
+html
+  head
+           link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous")
+           //link(rel='stylesheet', href='/stylesheets/admin.css')
+           script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous")
+           //script(src="/javascripts/myscript.js")
+           title Algo 
+  body
+   nav.navbar.bg-body-tertiary
+   .container-fluid
+      form.d-flex(role="search", onsubmit="return false;") 
+      input.form-control.me-2(type="search", placeholder="Search", aria-label="Search", name="term", id="searchInput")
+      button.btn.btn-outline-success(type="button", id="searchButton") Search
+      table.table#resultsTable
+          thead
+            tr
+              th ORDEN DE TRABAJO
+              th DNI
+              
+          tbody(id="resultsTbody")
+            
+   script.
+       const searchInput = document.getElementById('searchInput');
+       const tbody = document.getElementById('resultsTbody');
+     searchInput.addEventListener('input', () => {
+     const searchTerm = searchInput.value;
+     fetch('/examenordenes?term='  + searchTerm)
+     . then(response => response.json())
+       .then(data => {
+         // Borra los resultados anteriores
+          tbody.innerHTML = '';
+       
+      // Renderiza los nuevos resultados
+            if (data.length > 0) {
+            data.forEach(result => {
+            const row = document.createElement('tr');
+            const cell1 = document.createElement('td');
+            cell1.textContent = result.OrdenTrabajoId; // Reemplaza con el campo que deseas mostrar
+            const cell2 = document.createElement('td');
+            cell2.textContent = result.ExamenId; // Reemplaza con el campo que desees mostrar
+            // Agrega más celdas según tus necesidades
+            row.appendChild(cell1);
+            row.appendChild(cell2); 
+            // Agrega más celdas según tus necesidades
+            tbody.appendChild(row);
+             row.addEventListener('click', () => {   
+              window.location.href = '/formulario?id=' + result.ExamenId;
+               });
+          });
+        } else {
+          const row = document.createElement('tr');
+          const cell = document.createElement('td');
+          cell.textContent = 'No se encontraron resultados';
+          row.appendChild(cell);
+          tbody.appendChild(row);
+        }
+          })
+        .catch(error => {
+            console.error('Error al obtener resultados: ', error);
+          });
+        });
+
+   

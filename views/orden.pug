@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    title Formulario con Bootstrap
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css')
+
+  body
+    .container
+      h1.text-center Mi Formulario
+      form.form
+        .form-group
+          label(for='username') Nombre de usuario
+          input#username.form-control(type='text', placeholder='Ingresa tu nombre de usuario')
+        .form-group
+          label(for='password') Contraseña
+          input#password.form-control(type='password', placeholder='Ingresa tu contraseña')
+        button.btn.btn-primary(type='submit') Iniciar Sesión
+
+    script(src='https://code.jquery.com/jquery-3.5.1.slim.min.js')
+    script(src='https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js')

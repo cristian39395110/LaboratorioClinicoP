@@ -1,0 +1,52 @@
+nav.navbar.navbar-expand-lg.navbar-light.bg-light
+  .container
+    a.navbar-brand(href="#") Mi Sitio
+
+    button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-controls="navbarNav", aria-expanded="false", aria-label="Toggle navigation")
+      span.navbar-toggler-icon
+
+    #navbarNav.collapse.navbar-collapse
+      ul.navbar-nav
+        li.nav-item
+          a.nav-link(href="/vistaTecBioq/inicio") Inicio
+        li.nav-item.dropdown
+          a.nav-link.dropdown-toggle(href='#', role='button', data-bs-toggle='dropdown', aria-expanded='false')
+            | Examen
+          ul.dropdown-menu
+            li
+              a.dropdown-item(href="/vistaTecBioq/actualizar") Actualizar
+            li
+              a.dropdown-item(href="/vistaTecBioq/formExamen") Add 
+            li
+              hr.dropdown-divider
+            li
+              a.dropdown-item(href='#') Activar/Desactivar
+        li.nav-item.dropdown
+          a.nav-link.dropdown-toggle(href='#', role='button', data-bs-toggle='dropdown', aria-expanded='false')
+            | Muestras
+          ul.dropdown-menu
+            li
+              a.dropdown-item(href="/vistaTecBioq/addMuestra") Add
+              hr.dropdown-divider
+            li
+              a.dropdown-item(href='#') Activar/Desactivar      
+        li.nav-item.dropdown
+          a.nav-link.dropdown-toggle(href='#', role='button', data-bs-toggle='dropdown', aria-expanded='false')
+            | Determinaciones
+          ul.dropdown-menu
+            li
+              a.dropdown-item(href="/vistaTecBioq/addet") Add 
+            li
+              hr.dropdown-divider
+            li
+              a.dropdown-item(href="/vistaTecBioq/activarDeterminacion") Activar/desactivar
+        li.nav-item.dropdown
+          a.nav-link.dropdown-toggle(href='#', role='button', data-bs-toggle='dropdown', aria-expanded='false')
+            | Valores de Referencia
+          ul.dropdown-menu
+            li
+              a.dropdown-item(href="/vistaTecBioq/addValorRef") Add 
+            li
+              hr.dropdown-divider
+            li
+              a.dropdown-item(href="/vistaTecBioq/activarRef") Activar/desactivar

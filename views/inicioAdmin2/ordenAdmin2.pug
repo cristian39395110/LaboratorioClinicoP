@@ -1,0 +1,37 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title Laboratorio G3
+    link(rel='stylesheet', href='/stylesheets/admin2.css')
+   
+  body
+    nav.navbar.navbar-expand-lg
+      a.navbar-brand(href='#') API WEB LABORATORIO G3
+      .navbar-right
+        span
+          b Empleado:
+          span#usuario-activo Nombre de Usuario
+          button#cerrar-sesion.btn.btn-link Cerrar Sesión
+    .container
+      .row
+        aside.sidebar
+          ul.nav.flex-column
+            li.nav-item
+              a.nav-link.active(href='inicioAdmin2.pug') Inicio
+            li.nav-item
+              a.nav-link(href='usuarioAdmin2.pug') Gestión de Usuarios
+            li.nav-item
+              a.nav-link(href='ordenAdmin2.pug') Gestión de Órdenes
+            li.nav-item
+              a.nav-link(href='datosAdmin2.pug') Gestión de Datos
+        .main-content
+          h1 GESTION DE ORDENES:
+          div#contenido
+            
+          //ACA VA EL CONTENIDO
+
+    footer.footer
+      | &copy; 2023 Laboratorio G3
+  script(src='/javascripts/inicioAdmin2.js')

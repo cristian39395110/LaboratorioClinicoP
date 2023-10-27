@@ -1,0 +1,46 @@
+head
+  link(rel='stylesheet', href="/stylesheets/stylesordenes.css")
+  link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN", crossorigin="anonymous")
+  script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js", integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL", crossorigin="anonymous")
+
+  title Algo
+ 
+body
+  nav.navbar.navbar-expand-lg.bg-body-tertiary
+    .container
+      a.navbar-brand(href='#') INICIO
+      button.navbar-toggler(type='button', data-bs-toggle='collapse', data-bs-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+      #navbarSupportedContent.collapse.navbar-collapse
+        ul.navbar-nav.me-auto.mb-2.mb-lg-0
+          li.nav-item
+            a.nav-link.active(aria-current='page', href='#') Home
+          li.nav-item
+            a.nav-link(href='#') Link
+          li.nav-item.dropdown
+            a.nav-link.dropdown-toggle(href='#', role='button', data-bs-toggle='dropdown', aria-expanded='false') Ordenes
+            ul.dropdown-menu
+              li
+                a.dropdown-item(href="/actualizar-orden") Crear Orden
+              li
+                a.dropdown-item(href='actualizar-orden') Actualizar Orden
+              li
+                hr.dropdown-divider
+              li
+                a.dropdown-item(href='#') No se
+
+  .container
+    if ok
+      .contei
+      include search.pug
+    if k
+      .contein
+      include search.pug
+  script.
+    let okas=#{ok};
+    console.log(k+"----------------");
+    if (okas) {
+      console.log(ok);
+    } else {
+      console.log("false");
+    }

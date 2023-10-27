@@ -1,0 +1,87 @@
+html
+    head 
+      link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous")
+      script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
+             crossorigin="anonymous")
+      title Alfgo 
+    body
+      if modal
+          include ../modal.pug
+      .container
+        include navBar.pug
+      .container 
+        .row 
+          .div.col 
+            h1 Valores de referencia
+        .row  
+          .col.mt-4
+            form(method="POST", action=`/vistaTecBioq/addValorRef`, name="formDeterminacion" )
+                input(type="hidden" name="determinacionId" id="determinacionId")
+                .container.mt-4
+                    form(method="POST" name="formDeterminacion")
+                      .col-lg-4.col-md-6.col-sm-12
+                        div#listaDets
+                          ul
+                        label(for="determinacion", class="form-label") Determinaciones existentes:
+                        input#determinacion.form-control(list="datalistOptions", name="determinacion", placeholder=arrDet.length===0?"No hay determiniaciones":"Type to search...",disabled= arrDet.length === 0)
+                        datalist(id="datalistOptions")
+                          each det in arrDet
+                            option(id=det.id)= det.nombre
+                    .col-lg-4.col-md-6.col-sm-12
+                      label(for="sexo") Sexo:
+                        input(type="radio", id="sexo-masculino", name="sexo", value="M" required)
+                        label(for="sexo-masculino") Masculino
+                        input(type="radio", id="sexo-femenino", name="sexo", value="F" required)
+                        label(for="sexo-femenino") Femenino
+                        input(type="radio", id="sexo-otro", name="sexo", value="O" required)
+                        label(for="sexo-otro") Otro
+                      label(for="embarazada") ¿embarazada?
+                        select(id="embarazada", name="embarazo" required)
+                          option(value="true") Sí
+                          option(value="false") No  
+                    .col-lg-4.col-md-6.col-sm-12    
+                      label(for="unidadMedida") Edad mínima:
+                      input.form-control(type="number", name="edadMin", id="eMin",required)
+                    .col-lg-4.col-md-6.col-sm-12
+                      label(for="valorMin") Edad máxima:
+                      input.form-control(type="number", name="edadMax", id="eMax")
+                    .col-lg-4.col-md-6.col-sm-12
+                      label(for="valorMax") Valor Mínimo:
+                      input.form-control(type="number", name="valorMinimo", id="vMin")
+                    .col-lg-4.col-md-6.col-sm-12
+                      label(for="valorMax") Valor Máximo:
+                      input.form-control(type="number", name="valorMaximo", id="vMax")  
+                    .col-lg-4.col-md-6.col-sm-12
+                      button.btn.btn-primary(type="submit" disabled= arrDet.length === 0) Enviar 
+    script.   
+         const modal1=("#{modal}"!=="false")
+         if(modal1){
+         const miModal = new bootstrap.Modal(document.getElementById('miModal'));
+           miModal.show();
+           }
+          let detId=document.getElementById("determinacionId")
+           const listaDets = document.getElementById('listaDets').querySelector('ul');
+       const inputDet = document.getElementById('determinacion');
+       const datalistOptions = document.getElementById('datalistOptions').querySelectorAll('option');      
+           inputDet.addEventListener('input', () => {
+                                 const enteredValue = inputDet.value;
+                                 const options = Array.from(datalistOptions).map(option => option.value);
+                            console.log("eee ",options)
+                                 if (options.length===0 || !options.includes(enteredValue)) {
+                                     console.log("eeentro ",options)
+                                     inputDet.setCustomValidity('No ha seleccionado una determinación');
+                                 } else {
+                                   inputDet.setCustomValidity('');
+                                 }
+                                let selectedId = null;
+                                 const selectedOption = Array.from(datalistOptions).find(option => option.value === inputDet.value);
+                                       if (selectedOption) {
+                                         selectedId = selectedOption.getAttribute('id');
+                                         console.log("a ver...",selectedId)
+                                         detId.value=selectedId
+                                       } else {
+                                         selectedId = null;
+                                       }
+               
+             });

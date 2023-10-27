@@ -1,0 +1,111 @@
+/* Estilo para el body */
+body {
+  background-color: #f4f4f4;
+  font-family: Arial, sans-serif;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilo para los encabezados */
+h1,
+h2,
+h3,
+h4,
+h5 {
+  color: #636262;
+}
+
+/* Estilo para los enlaces */
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+/* Estilo para los botones */
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+/* Estilo para la barra de navegación */
+.nav-tabs {
+  background-color: #e08787;
+  color: #fff;
+}
+
+.nav-link {
+  color: #fff;
+}
+
+/* Estilo para las pestañas activas */
+.nav-link.active {
+  background-color: #007bff;
+}
+
+/* Estilo para las tablas */
+table {
+  width: 80%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+/* Estilo para los formularios */
+form {
+  margin-bottom: 20px;
+  width: 50%;
+  padding: 20px;
+  /* Espacio interior para el contenido del formulario */
+  border: 1px solid #070707;
+  /* Borde opcional */
+  background-color: #e0abab;
+  /* Color de fondo rgb(231, 196, 196)l */
+}
+
+/* Estilo para los elementos de formulario */
+input[type="text"],
+input[type="email"],
+select {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Estilo para los botones de formulario */
+input[type="submit"] {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+/* Estilo para los mensajes de error */
+.error-message {
+  color: #ff0000;
+  font-weight: bold;
+}
+
+/* Estilo para el contenedor de resultados */
+.tab-content {
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para el modal (si está en uso) */
+.modal {
+  background-color: rgba(94, 92, 92, 0.5);
+}

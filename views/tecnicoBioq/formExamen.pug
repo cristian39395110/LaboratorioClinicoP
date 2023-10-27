@@ -1,0 +1,376 @@
+html
+    head  
+          script(src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+                 integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
+                 crossorigin="anonymous")
+          link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css")
+          link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous")
+          script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous")
+          title Alfgo 
+    body
+    include navBar.pug
+    .container.mt-4   
+        form(action="/vistaTecBioq/submit", method="post" name="formu")
+          .mb-3.col-lg-4.col-md-6.col-sm-12
+            label(for="nombre", class="form-label") Nombre:
+            input#nombre.form-control(type="text", name="eNombre")
+          .mb-3.col-lg-4.col-md-6.col-sm-12
+             label(for="muestras", class="form-label") Muestras:
+             each muestra in arrMuestras
+               .form-check
+                 input.form-check-input(type="checkbox", id=`muestra-${muestra.id}`, name="muestras", value=muestra.id)
+                 label.form-check-label(for=`muestra-${muestra.id}`)= muestra.nombre
+          .mb-3.col-lg-4.col-md-6.col-sm-12
+             label(for="tipoExamen", class="form-label") Tipo examen:
+             each te in arrTe
+               .form-check
+                 input.form-check-input(type="checkbox", id=`te-${te.id}`, name="tipoExamen", value=te.id)
+                 label.form-check-label(for=`te-${te.id}`)= te.nombre             
+          .mb-3.col-lg-4.col-md-6.col-sm-12
+            label(for="detalle", class="form-label") Detalle:
+            textarea#detalle.form-control(name="detalle", rows="3")
+          .container.mt-4
+            form(method="POST", action=`${ruta}`, name="formDeterminacion", novalidate)
+              .col-lg-4.col-md-6.col-sm-12
+                div#listaDets
+                  ul
+                label(for="determinacion", class="form-label") Determinaciones existentes:
+                input#determinacion.form-control(list="datalistOptions", name="determinacion", placeholder="Type to search...")
+                datalist(id="datalistOptions")
+                  each det in arrDet
+                    option(id=det.id)= det.nombre
+
+
+            #acordeon.accordion
+            button.btn.btn-primary(type="button", id="addFieldsButton") Agregar nueva determinación   
+            button.btn.btn-primary(type="submit") Enviar
+    
+    script.
+       const listaDets = document.getElementById('listaDets').querySelector('ul');
+       const inputDet = document.getElementById('determinacion');
+       const datalistOptions = document.getElementById('datalistOptions').querySelectorAll('option');      
+           inputDet.addEventListener('input', () => {
+               const valorSeleccionado = inputDet.value;
+               if (valorSeleccionado.trim() !== '') { // Verifica si el campo no está vacío
+                 const option = Array.from(datalistOptions).find(option => option.value === valorSeleccionado);
+                 if (option) {
+                   const li = document.createElement('li');
+                   const i = document.createElement('input');
+                   i.name = 'detExistentes';
+                   i.value = option.id;
+                   i.type = 'hidden';
+                   li.textContent = valorSeleccionado;
+                   li.appendChild(i);
+                   const cruz = document.createElement('button');
+                   cruz.className = 'btn btn-close danger btn-sm';
+                   cruz.addEventListener('click', () => {
+                     li.remove();
+                   });
+                   li.appendChild(cruz);
+                   listaDets.appendChild(li);
+                   inputDet.value = '';
+                 }
+               }
+             });
+
+       const addBtn= document.getElementById('addFieldsButton');
+       const ocultos = document.querySelectorAll('.ocultos');
+       const acordeon=document.getElementById("acordeon");
+       let i=0;
+
+       addBtn.addEventListener('click', () => {
+         const item=document.createElement('div');
+         item.id=`item-${i}`
+         item.classList.add('accordion-item');
+             const h2Element = document.createElement('h2');
+             h2Element.classList.add('accordion-header');
+             const button = document.createElement('button');
+             button.id = `header-${i}`;
+             button.classList.add('accordion-button');
+             button.setAttribute('type', 'button');
+             button.setAttribute('data-bs-toggle', 'collapse');
+             button.setAttribute('data-bs-target', `#panelsStayOpen-collapse${i}`);
+             button.setAttribute('aria-expanded', 'true');
+             button.setAttribute('aria-controls', `panelsStayOpen-collapse${i}`);
+             //boton para eliminar
+             const eliminarBtn=document.createElement('button')
+             eliminarBtn.id=`eliminarBtn-${i}`
+             eliminarBtn.classList.add("btn", "btn-close" ,"danger", "btn-sm")
+            eliminarBtn.addEventListener('click', e=>{
+                 const[,b]=e.target.id.split("-")
+                 eliminarItem(`item-${b}`);
+               });
+            // button.textContent = `Accordion Item #${i}`;
+             h2Element.appendChild(button);
+             button.appendChild(eliminarBtn)
+             const s=document.createElement('span');
+             s.id=`s-${i}`
+             button.appendChild(s);
+         item.appendChild(h2Element);
+             const divCollapse = document.createElement('div');
+             divCollapse.id = `panelsStayOpen-collapse${i}`;
+             divCollapse.classList.add('accordion-collapse', 'collapse', 'show');
+             const divAccordionBody = document.createElement('div');
+             divAccordionBody.classList.add('accordion-body');
+             const divContainer = document.createElement('div');
+             divContainer.classList.add('container');        
+             divAccordionBody.appendChild(divContainer);
+             const divDetValorRef = document.createElement('div');        
+             divDetValorRef.classList.add('row');
+             divContainer.appendChild(divDetValorRef);
+             divDetValorRef.appendChild(htmlDeterminacion(i));
+             divDetValorRef.appendChild(htmlTabla(i));
+             divCollapse.appendChild(divAccordionBody);
+         item.appendChild(divCollapse);
+             i++
+             acordeon.appendChild(item);
+             function eliminarItem(itemId) {
+                 const item = document.getElementById(itemId);
+                if (item) {
+                     item.remove();
+                 }
+             }
+
+       })
+
+       ///////////////////////////////////////////////////////////  DETERMINACIÓN
+          const htmlDeterminacion=(n)=>{
+           const header={}
+             const arrDiv=[];
+             for(let p=0;p<9;p++){
+                const div=document.createElement(`div`);
+                arrDiv.push(div)
+                switch(p){
+                     case 2:case 3:case 4:  arrDiv[p].classList.add("row")
+                             break;
+                     case 5:case 6:case 7:case 8: arrDiv[p].classList.add("col-lg-4", "col-md-6", "col-sm-12")
+                             break;
+                   }
+                }
+                 let label = document.createElement('label');
+                 label.setAttribute('for', `nombre-${n}`);
+                 label.textContent = 'Nombre:';
+                 let input = document.createElement('input');
+                 input.setAttribute('class', 'form-control');
+                 input.setAttribute('type', 'text');
+                 //input.setAttribute('name', `determinaciones[det-${n}[nombre-${n}]]`);
+                 input.setAttribute('name', `nombrey${n}`);
+                 arrDiv[5].appendChild(label);
+                 arrDiv[5].appendChild(input);
+                 input.addEventListener('input',(e)=>{
+
+                     const head=document.getElementById(`s-${n}`);
+                       header.nombre=e.target.value 
+
+                     head.textContent=JSON.stringify(header)
+
+                 })
+                 label = document.createElement('label');
+                 label.setAttribute('for', `valorMiny${n}`);
+                 label.textContent = 'Valor Mínimo:';
+                 input = document.createElement('input');
+                 input.setAttribute('class', 'form-control');
+                 input.setAttribute('type', 'number');
+             //input.setAttribute('name', `det-${n}[valorMin-${n}]`);
+             input.setAttribute('name', `valorMiny${n}`);
+             input.setAttribute('step', '0.1');
+             arrDiv[6].appendChild(label);
+             arrDiv[6].appendChild(input);
+             input.addEventListener('input',(e)=>{
+                     const head=document.getElementById(`s-${n}`);
+                       header.valorMin=e.target.value                      
+                     head.textContent=JSON.stringify(header)
+
+                 })
+             label = document.createElement('label');
+             label.setAttribute('for', `valorMaxy${n}`);
+             label.textContent = 'Valor Máximo:';
+             input = document.createElement('input');
+             input.setAttribute('class', 'form-control');
+             input.setAttribute('type', 'number');
+             //input.setAttribute('name', `det-${n}[valorMax-${n}]`);
+             input.setAttribute('name', `valorMaxy${n}`);
+             input.setAttribute('step', '0.1');            
+             arrDiv[7].appendChild(label);
+             arrDiv[7].appendChild(input);
+             input.addEventListener('input',(e)=>{
+                     const head=document.getElementById(`s-${n}`);
+                       header.valorMax=e.target.value                      
+                     head.textContent=JSON.stringify(header)
+
+                 })
+             label = document.createElement('label');
+             label.setAttribute('for', `unidadMediday${n}`);
+             label.textContent = 'Unidad de Medida:';
+             input = document.createElement('input');
+             input.setAttribute('class', 'form-control');
+             input.setAttribute('type', 'text');
+             //input.setAttribute('name', `det-${n}[unidadMedida-${n}]`);
+             input.setAttribute('name', `unidadMediday${n}`);                        
+             arrDiv[8].appendChild(label);
+             arrDiv[8].appendChild(input);
+             input.addEventListener('input',(e)=>{
+
+                     const head=document.getElementById(`s-${n}`);
+                       header.unidadMedida=e.target.value                      
+                     head.textContent=JSON.stringify(header)
+
+                 })            
+             arrDiv[0].innerHTML=`<h2>Determinación</h2>`
+             for(let p=2;p<5;p++)
+                arrDiv[1].appendChild(arrDiv[p])
+             arrDiv[2].appendChild(arrDiv[5]);
+             arrDiv[3].appendChild(arrDiv[6]);            
+             arrDiv[3].appendChild(arrDiv[7]);
+             arrDiv[4].appendChild(arrDiv[8]);
+             const divElement = document.createElement('div');
+             divElement.setAttribute('class', 'col-4');
+             divElement.setAttribute('id', 'determinacion');
+             divElement.appendChild(arrDiv[0])            
+             divElement.appendChild(arrDiv[1])
+
+
+             return divElement
+             }   
+       ////////////////////////////////////////////////////     tabla
+         const htmlTabla=(n)=>{     
+           const header2={}   
+            const titulo = document.createElement('div');
+            titulo.classList.add('row', 'align-items-center');
+
+             const innerDiv = document.createElement('div');
+             innerDiv.classList.add('md-6', 'd-flex', 'justify-content-center');
+             const h2 = document.createElement('h2');
+             h2.textContent = 'Valores de referencia';
+             titulo.appendChild(innerDiv);
+             innerDiv.appendChild(h2);
+
+             /*crear el acordeon*/
+               const acordeon=crearAcordion("ac2");
+               const i1=addItem(n,"ac2-0","Hombre",crearBtnAdd(`Hombre${n}`,"ac2-0",n),false);// n=cantidad de determinaciones
+               const i2=addItem(n,"ac2-1","Mujer",crearBtnAdd(`Mujer${n}`,"ac2-1",n),false);
+               const i3=addItem(n,"ac2-2","Embarazada",crearBtnAdd(`Embarazada${n}`,"ac2-2",n),false);
+               acordeon.appendChild(i1);
+               acordeon.appendChild(i2);  
+               acordeon.appendChild(i3);    
+                 const divElement = document.createElement('div');
+                 divElement.classList.add('col');
+                 divElement.setAttribute('id', 'valoresReferencia');
+                 divElement.appendChild(titulo); 
+                 divElement.appendChild(acordeon)
+                 return divElement;  
+           }
+
+           ///////////////////////////////////////////////////// CREAR ACORDION
+           const crearAcordion=(id)=>{
+           const acordeon= document.createElement('div');
+           acordeon.className = 'accordion';
+           acordeon.id = id;
+           return acordeon
+           }
+           ///////////////////////////////////////////////////////////crear item acordeon
+           const addItem=(c,n, titulo, body, expanded)=>{//c=cantidad de determinaciones
+                   const accordionItem = document.createElement('div');
+                   accordionItem.className = 'accordion-item';                  
+
+                   const h2 = document.createElement('h2');
+                   h2.className = 'accordion-header';                  
+
+                   const button = document.createElement('button');
+                   h2.appendChild(button)
+                   accordionItem.appendChild(h2);
+                   button.classList.add('accordion-button','colapsed');
+                   button.type = 'button';
+                   button.setAttribute('data-bs-toggle',"collapse")
+                   button.setAttribute('data-bs-target', `#panelsStayOpen-collapses${n+c}`);
+                   button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                   button.setAttribute('aria-controls', `panelsStayOpen-collapses${n+c}`);
+                   button.textContent = titulo;                  
+
+                   const accordionCollapse = document.createElement('div');
+                   accordionItem.appendChild(accordionCollapse);
+                   accordionCollapse.id = `panelsStayOpen-collapses${n+c}`;
+                   accordionCollapse.className = 'accordion-collapse collapse' + (expanded ? ' show' : '');                   
+
+                   const accordionBody = document.createElement('div');
+                   accordionBody.id=`body-${n}`
+                   accordionCollapse.appendChild(accordionBody);
+                   accordionBody.className = 'accordion-body';
+                   accordionBody.appendChild(body);       
+
+                   const table = document.createElement('table');
+                   const thead = document.createElement('thead');
+                   const tr = document.createElement('tr');
+                   thead.appendChild(tr);
+                   table.appendChild(thead)
+                   const encabezados = ['Edad Min', 'Edad Max', 'Valor Min', 'Valor Max',' '];
+                   encabezados.forEach(enc => {
+                     const th = document.createElement('th');
+                     th.textContent = enc;
+                     tr.appendChild(th);
+                   });
+
+                   const tbody = document.createElement('tbody');  
+                   table.appendChild(tbody)
+                   tbody.id=`${n+c}` //
+                  const container=document.createElement('div');
+                   container.classList.add("container")
+                   container.appendChild(table)
+                   accordionBody.appendChild(container) 
+                   return accordionItem;
+                 }
+
+                 ////////////////////////////////////// crear boton agregar
+                 const crearBtnAdd=(id,m,n)=>{
+                   const button = document.createElement('button');
+                   button.type="button"
+                   button.id="btn"+id;         
+                   button.classList.add('btn','btn-success', 'btn-sm')
+                   const i=document.createElement('i')
+                   i.classList.add("bi","bi-plus") 
+                   button.appendChild(i)
+                   let clicksCantidad=0;
+                   button.addEventListener('click',(e)=>{
+                         inputs(`${id}-${clicksCantidad}`,m,n)
+                         clicksCantidad++
+                   })
+                   return button
+                 }
+                 ///////////////////////////////////////////// add inputs
+                 const inputs=(tfila,m,n)=>{
+                   let [titulo,nuroFila]=tfila.split("-");
+                   titulo=titulo.slice(0,-1)
+                   const eliminarBtn=document.createElement('button')
+                   eliminarBtn.type="button"
+                   eliminarBtn.id=`btn-${nuroFila}`
+                    eliminarBtn.classList.add("btn", "btn-close" ,"danger", "btn-sm")
+                   eliminarBtn.addEventListener('click', e=>{
+                          [,b]=e.target.id.split("-")
+                          const fila = document.getElementById("fila-"+b);
+                               if (fila) {
+                                    fila.remove();
+                                }
+                                     }); 
+                   const tbody = document.getElementById(m+n);
+                       const fila = document.createElement('tr');
+                       fila.id=`fila-${nuroFila}`
+                 const encabezados = ['edadMin', 'edadMax', 'valorMin', 'valorMax'];
+
+                         for (let j = 0; j < 5; j++) {
+                          const td = document.createElement('td');
+                          if(j===4){
+                           td.appendChild(eliminarBtn);
+                          }
+                          else{
+                          const input = document.createElement('input');
+                          input.name=`${titulo}${nuroFila}filay${n}`
+                          input.classList.add('form-control');
+                          input.setAttribute('type', 'number');
+                          td.appendChild(input);}
+                          fila.appendChild(td);
+                        }
+
+                        tbody.appendChild(fila);
+
+
+                   }

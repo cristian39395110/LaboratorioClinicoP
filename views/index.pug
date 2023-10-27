@@ -1,0 +1,35 @@
+doctype html
+html
+  head
+    title Formulario de Inicio de Sesión
+    link(rel="stylesheet", href="/stylesheets/index.css")
+  body
+  .login-container
+    img(src="/img/nombreLab.png", alt="Imagen de fondo") 
+    br
+    h1 Inicio de Sesión
+    img(src="/img/imagenLab.png", alt="Imagen de fondo") 
+    form(action="/", method="post" name="formu")
+      label(for="usuario") Usuario
+      input(type="text", id="usuario", name="email", placeholder="Ingresa tu usuario o correo electrónico", required,value=(typeof emailValue !== 'undefined') ? emailValue : '')
+      if(email)
+        br
+        p(id="errorEmail") #{email}
+      br
+      label(for="contrasena") Contraseña:
+      input(type="password", id="contrasena", name="contrasena", placeholder="Ingresa tu contraseña", required, value=value=(typeof passValue !== 'undefined') ? passValue : '')
+      if(pass)
+        br
+        p(id="errorPass") #{pass}
+      br
+      label(for="contrasena") Rol:
+      select(id="opciones" name="nombreRol")
+        option(value="paciente") Paciente
+        option(value="Administrativo") Administrativo
+        option(value="tecnico") Tecnico
+        option(value="Bioquimico") Bioquimico
+      input(type="submit")
+      br
+    script.
+      var token = "#{token}";
+    script(src="./javascripts/index.js")  

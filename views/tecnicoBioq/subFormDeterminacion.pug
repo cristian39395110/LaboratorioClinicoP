@@ -1,0 +1,191 @@
+.container.mt-4
+  form(method="POST", action=`${ruta}`, name="formDeterminacion", novalidate)
+    .col-lg-4.col-md-6.col-sm-12
+      div#listaDets
+        ul
+      label(for="determinacion", class="form-label") Determinaciones existentes:
+      input#determinacion.form-control(list="datalistOptions", name="determinacion", placeholder="Type to search...")
+      datalist(id="datalistOptions")
+        each det in arrDet
+          option(id=det.id)= det.nombre
+      
+
+#acordeon.accordion
+button.btn.btn-primary(type="button", id="addFieldsButton") Agregar nueva determinación    
+                                      
+
+script.
+      const listaDets = document.getElementById('listaDets').querySelector('ul');
+      const inputDet = document.getElementById('determinacion');
+      const datalistOptions = document.getElementById('datalistOptions').querySelectorAll('option');
+      inputDet.addEventListener('input', () => {
+        const valorSeleccionado = inputDet.value;
+        const optionExists = Array.from(datalistOptions).some(option => option.value === valorSeleccionado);
+        if(!optionExists){
+            const newOption = document.createElement('option');
+          newOption.value = inputDet.value;
+          datalist.appendChild(newOption);
+        }
+        if (optionExists) {
+          const li = document.createElement('li');
+          li.textContent = valorSeleccionado;
+          const cruz = document.createElement('button');
+          cruz.className = 'btn btn-close danger btn-sm'; 
+          cruz.addEventListener('click', () => {
+            li.remove();
+          });
+          li.appendChild(cruz);
+          listaDets.appendChild(li);
+          inputDet.value = '';
+        }
+      });
+      const addBtn= document.getElementById('addFieldsButton');
+      const ocultos = document.querySelectorAll('.ocultos');
+      const acordeon=document.getElementById("acordeon");
+      let i=0;
+      addBtn.addEventListener('click', () => {
+        const item=document.createElement('div');
+        item.classList.add('accordion-item');
+            const h2Element = document.createElement('h2');
+            h2Element.classList.add('accordion-header');
+            const button = document.createElement('button');
+            button.id = `header-${i}`;
+            button.classList.add('accordion-button');
+            button.setAttribute('type', 'button');
+            button.setAttribute('data-bs-toggle', 'collapse');
+            button.setAttribute('data-bs-target', `#panelsStayOpen-collapse${i}`);
+            button.setAttribute('aria-expanded', 'true');
+            button.setAttribute('aria-controls', `panelsStayOpen-collapse${i}`);
+            button.textContent = `Accordion Item #${i}`;
+            h2Element.appendChild(button);
+        item.appendChild(h2Element);
+            const divCollapse = document.createElement('div');
+            divCollapse.id = `panelsStayOpen-collapse${i}`;
+            divCollapse.classList.add('accordion-collapse', 'collapse', 'show');
+            const divAccordionBody = document.createElement('div');
+            divAccordionBody.classList.add('accordion-body');
+            const divContainer = document.createElement('div');
+            divContainer.classList.add('container');        
+            divAccordionBody.appendChild(divContainer);
+            const divDetValorRef = document.createElement('div');        
+            divDetValorRef.classList.add('row');
+            divContainer.appendChild(divDetValorRef);
+            divDetValorRef.appendChild(htmlDeterminacion());
+            divDetValorRef.appendChild(htmlTabla());
+            divCollapse.appendChild(divAccordionBody);
+        item.appendChild(divCollapse);
+            i++
+            acordeon.appendChild(item);
+
+      })
+         const htmlDeterminacion=(n)=>{
+            const arrDiv=[];
+            for(let p=0;p<9;p++){
+               const div=document.createElement(`div`);
+               arrDiv.push(div)
+               switch(p){
+                    case 2:case 3:case 4:  arrDiv[p].classList.add("row")
+                            break;
+                    case 5:case 6:case 7:case 8: arrDiv[p].classList.add("col-lg-4", "col-md-6", "col-sm-12")
+                            break;
+                  }
+               }
+                let label = document.createElement('label');
+                label.setAttribute('for', `nombre-${n}`);
+                label.textContent = 'Nombre:';
+                let input = document.createElement('input');
+                input.setAttribute('class', 'form-control');
+                input.setAttribute('type', 'text');
+                input.setAttribute('name', `nombre-${n}`);
+                arrDiv[6].appendChild(label);
+                arrDiv[6].appendChild(input);
+                label = document.createElement('label');
+                label.setAttribute('for', `valorMin-${n}`);
+                label.textContent = 'Valor Mínimo:';
+                input = document.createElement('input');
+                input.setAttribute('class', 'form-control');
+                input.setAttribute('type', 'number');
+            input.setAttribute('name', `valorMin-${n}`);
+            input.setAttribute('step', '0.1');
+            arrDiv[7].appendChild(label);
+            arrDiv[7].appendChild(input);
+            label = document.createElement('label');
+            label.setAttribute('for', `valorMax-${n}`);
+            label.textContent = 'Valor Máximo:';
+            input = document.createElement('input');
+            input.setAttribute('class', 'form-control');
+            input.setAttribute('type', 'number');
+            input.setAttribute('name', `valorMax-${n}`);
+            input.setAttribute('step', '0.1');            
+            arrDiv[8].appendChild(label);
+            arrDiv[8].appendChild(input);
+            label = document.createElement('label');
+            label.setAttribute('for', `unidadMedida-${n}`);
+            label.textContent = 'Unidad de Medida:';
+            input = document.createElement('input');
+            input.setAttribute('class', 'form-control');
+            input.setAttribute('type', 'text');
+            input.setAttribute('name', `unidadMedida-${n}`);                        
+            arrDiv[9].appendChild(label);
+            arrDiv[9].appendChild(input);            
+            arrDiv[0].innerHTML=`<h2>Determinación</h2>`
+            for(let p=2;p<5;p++)
+               arr[1].appendChild(p)
+            arr[2].appendChild(arr[5]);
+            arr[3].appendChild(arr[6]);            
+            arr[3].appendChild(arr[7]);
+            arr[4].appendChild(arr[8]);
+            const divElement = document.createElement('div');
+            divElement.setAttribute('class', 'col-4');
+            divElement.setAttribute('id', 'determinacion');
+            divElement.appendChild(arr[0])            
+            divElement.appendChild(arr[1])
+            return divElement
+            }   
+        const htmlTabla=(n)=>{        
+           const titulo = document.createElement('div');
+            titulo.classList.add('row', 'align-items-center');
+            const innerDiv = document.createElement('div');
+            innerDiv.classList.add('md-6', 'd-flex', 'justify-content-center');
+            const h2 = document.createElement('h2');
+            h2.textContent = 'Valores de referencia';
+            const table = document.createElement('table');
+            table.classList.add('table', 'table-bordered');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+            const data = [
+                ['Edad Mínima:', 'hombre_edad_minima', 'mujer_edad_minima', 'embarazada_edad_minima'],
+                ['Edad Máxima:', 'hombre_edad_maxima', 'mujer_edad_maxima', 'embarazada_edad_maxima'],
+                ['Valor Mínimo:', 'hombre_valor_minimo', 'mujer_valor_minimo', 'embarazada_valor_minimo'],
+                ['Valor Máximo:', 'hombre_valor_maximo', 'mujer_valor_maximo', 'embarazada_valor_maximo']
+            ];
+            data.forEach(rowData => {
+                const row = document.createElement('tr');
+                rowData.forEach(labelText => {
+                    const cell = document.createElement('td');
+                    const label = document.createElement('label');
+                    label.setAttribute('for', labelText);
+                    label.textContent = labelText;
+                    const input = document.createElement('input');
+                    input.classList.add('form-control');
+                    input.setAttribute('type', 'number');
+                    input.setAttribute('name', labelText);
+                    input.setAttribute('required', true);
+                    input.id = labelText; 
+                    cell.appendChild(label);
+                    cell.appendChild(input);
+                    row.appendChild(cell);
+                });
+
+                if (rowData[0] === 'Edad Mínima:') {
+                    row.querySelector('input').id = 'hombre_edad_minima';
+                }
+                const div2 = document.createElement('div');
+                div2.classList.add('row');
+                div2.appendChild(table)
+                const divElement = document.createElement('div');
+                divElement.classList.add('col');
+                divElement.setAttribute('id', 'valoresReferencia');
+                divElement.appendChild(titulo);
+                divElement.appendChild(div2);
+                return divElement;           }

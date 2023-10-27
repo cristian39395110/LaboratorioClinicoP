@@ -1,0 +1,67 @@
+form(action=`${ruta}` method="post" name=`${nombreForm}` novalidate)
+    .form-group.mb-4
+        input(type="hidden" name="dni" value=`${getPacienteEditar?getPacienteEditar():"documento3"}`)
+        label(for="nombre"+`${nombreForm=="formE"?"E":""}`) Nombre:
+        input(type="text", name="nombre", id="nombre"+`${nombreForm=="formE"?"E":""}`, class="form-control", required, oninput="this.value = this.value.toUpperCase()",value=valoresForm && valoresForm.nombre ? valoresForm.nombre : "")
+        div.invalid-feedback Este campo es obligatorio.
+        if Object.keys(errors).length > 0
+            if errors.nombre
+                .alert.alert-danger  #{errors.nombre} 
+    .form-group.mb-4
+        label(for="apellido"+`${nombreForm=="formE"?"E":""}`) Apellido:
+        input(type="text", name="apellido", id="apellido"+`${nombreForm=="formE"?"E":""}`, class="form-control", required, oninput="this.value = this.value.toUpperCase()", value=valoresForm && valoresForm.apellido ? valoresForm.apellido : "")
+        div.invalid-feedback Este campo es obligatorio.
+        if Object.keys(errors).length > 0
+            if errors.apellido
+                .alert.alert-danger  #{errors.apellido}
+    .form-group.mb-4
+        label(for="documento"+`${nombreForm=="formE"?"E":""}`) Documento:
+        input(type="text", name="documento", id="documento"+`${nombreForm=="formE"?"E":""}`, class="form-control", required, value=valoresForm && valoresForm.documento ? valoresForm.documento : "")
+        div.invalid-feedback Este campo es obligatorio.
+        if Object.keys(errors).length > 0
+            if errors.documento
+                .alert.alert-danger #{errors.documento}
+    .form-group.mb-4
+        label(for="fechaNacimiento"+`${nombreForm=="formE"?"E":""}`) Fecha de Nacimiento:
+        input(type="date",min="1873-01-01",max= currentDate, name="fechaNacimiento", id="fechaNacimiento"+`${nombreForm=="formE"?"E":""}`, class="form-control", required, value=valoresForm && valoresForm.fechaNacimiento ? valoresForm.fechaNacimiento : "")
+        div.invalid-feedback Ingrese una fecha válida.
+        if Object.keys(errors).length > 0
+            if errors.fechaNacimiento
+                .alert.alert-danger #{errors.fechaNacimiento}
+    .form-group.mb-4
+      label(for="genero"+`${nombreForm=="formE"?"E":""}`) Género:
+      select(name="genero", id="genero"+`${nombreForm=="formE"?"E":""}`, class="form-control", required)
+          option(value="") -- Seleccione una opción --
+          option(value="Masculino" selected=valoresForm && valoresForm.genero && (valoresForm.genero === "Masculino")) Masculino
+          option(value="Femenino" selected=valoresForm && valoresForm.genero && (valoresForm.genero === "Femenino")) Femenino
+          option(value="Otro" selected=valoresForm && valoresForm.genero && (valoresForm.genero === "Otro")) Otro
+      div.invalid-feedback Este campo es obligatorio.
+    .form-group.mb-4
+        label(for="embarazada") ¿Está embarazada?
+            div(id="embarazadaDiv")
+                input(type="radio", name="embarazo",value="true", id="embarazada"+`${nombreForm=="formE"?"E":""}`+"Si", required, checked=valoresForm && valoresForm.embarazo && valoresForm.embarazo === 'true')
+                label(for="embarazada"+`${nombreForm=="formE"?"E":""}`+"Si") - Sí 
+                br
+                input(type="radio", name="embarazo",value="false", id="embarazada"+`${nombreForm=="formE"?"E":""}`+"No",required, checked=valoresForm && valoresForm.embarazo && valoresForm.embarazo === 'false' )
+                label(for="embarazada"+`${nombreForm=="formE"?"E":""}`+"No") - No 
+                div.invalid-feedback Este campo es obligatorio.
+    .form-group.mb-4
+        label(for="telefono"+`${nombreForm=="formE"?"E":""}`) Teléfono:
+        input(type="text", pattern="[0-9]*",maxlength="10", name="telefono", id="telefono"+`${nombreForm=="formE"?"E":""}`, class="form-control", required, value=valoresForm && valoresForm.telefono ? valoresForm.telefono : "")
+        div.invalid-feedback Este campo es obligatorio.
+    .form-group.mb-4
+        label(for="direccion"+`${nombreForm=="formE"?"E":""}`) Dirección:
+        input(type="text", name="direccion", id="direccion"+`${nombreForm=="formE"?"E":""}`, class="form-control", required, oninput="this.value = this.value.toUpperCase()",value=valoresForm && valoresForm.direccion ? valoresForm.direccion : "")
+        div.invalid-feedback Este campo es obligatorio.
+    .form-group.mb-4
+        label(for="email"+`${nombreForm=="formE"?"E":""}`) Email:
+        input(type="email"+`${nombreForm=="formE"?"E":""}`, name="email", id="email"+`${nombreForm=="formE"?"E":""}`, class="form-control", required, value=valoresForm && valoresForm.email ? valoresForm.email : "")
+        div.invalid-feedback Este campo es obligatorio.
+        if Object.keys(errors).length > 0
+            if errors.email
+                .alert.alert-danger #{errors.email}
+    .form-group.mb-4
+        label(for="rol"+`${nombreForm=="formE"?"E":""}`) Rol:
+        input(type="text", name="rol", id="rol"+`${nombreForm=="formE"?"E":""}`, class="form-control", required, readonly, value="Paciente")
+    .text-center
+    button(type="submit", class="btn btn-primary") Enviar
