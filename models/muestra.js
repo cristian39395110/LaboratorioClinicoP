@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
 }
 
   Muestra.init({
-    ordenId: DataTypes.INTEGER,
+    ordenTrabajoId: DataTypes.INTEGER,
     tipoMuestraId: DataTypes.INTEGER,
     entregada: DataTypes.BOOLEAN
   }, {

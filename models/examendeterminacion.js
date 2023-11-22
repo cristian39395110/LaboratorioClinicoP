@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {      
       ExamenDeterminacion.belongsTo(models.Determinacion);
-      ExamenDeterminacion.belongsTo(models.Usuario);
+      ExamenDeterminacion.belongsTo(models.Examen);
     }
   }
   ExamenDeterminacion.init({
@@ -21,7 +21,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ExamenDeterminacion',
-    tableName:'examendeterminaciones'
+    tableName:'examendeterminaciones',
+    paranoid:true
   });
   return ExamenDeterminacion;
 };

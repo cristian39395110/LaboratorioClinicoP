@@ -1,0 +1,112 @@
+form(action= ruta?ruta:`/vistaGestionUsers/add` method="post" name= novalidate class="mt-5")
+    if form && form.id
+                 input(name="id" type="hidden" value=form.id)
+    .row
+        .col-6
+            .row
+                .col
+                    .form-group.mb-4
+                        label(for="nombre") Nombre:
+                        input(type="text", name="nombre", class="form-control", id="nombre", value= form? form.nombre:'')
+                        if obj && obj.errors
+                            - e=obj.errors.find(e=>e.path==='nombre') 
+                            if e 
+                              p(class="text-danger")= e.msg
+                .col
+                    .form-group.mb-4
+                        label(for="apellido") Apellido:
+                        input(type="text", name="apellido", id="apellido", class="form-control" value=form?form.apellido:'')
+                        if obj && obj.errors
+                            - e=obj.errors.find(e=>e.path==='apellido') 
+                            if e 
+                              p(class="text-danger")= e.msg
+    .row
+        .col-6
+            .row
+                .col
+                    .form-group.mb-4
+                        label(for="documento") Documento:
+                        input(type="text",class="form-control", name="documento", id="documento" value=form?form.documento:'')
+                        if obj && obj.errors
+                            - e=obj.errors.find(e=>e.path==='documento') 
+                            if e 
+                              p(class="text-danger")= e.msg
+                .col        
+                    .form-group.mb-4
+                        label(for="matricula") Matrícula:
+                        input(type="text",class="form-control", name="matricula", id="matricula" value=form?form.matricula:'')
+                        if obj && obj.errors
+                            - e=obj.errors.find(e=>e.path==='matricula') 
+                            if e 
+                              p(class="text-danger")= e.msg    
+    .row
+        .col-6
+            .row 
+                .col
+                    .form-group.mb-4
+                        label(for="fechaNacimiento") Fecha de Nacimiento:
+                        input(type="date",min="1873-01-01",max= currentDate, name="fechaNacimiento", id="fechaNacimiento", class="form-control" value=form?form.fechaNacimiento:'')
+                        if obj && obj.errors
+                            - e=obj.errors.find(e=>e.path==='fechaNacimiento') 
+                            if e 
+                              p(class="text-danger")= e.msg
+                .col
+                    .form-group.mb-4
+                      label(for="genero") Género:
+                      select(name="genero", id="genero", class="form-control", required)
+                          option(value="") -- Seleccione una opción --
+                          option(value="Masculino" selected=form && form.genero==='Masculino' ) Masculino
+                          option(value="Femenino" selected=form && form.genero==='Femenino' ) Femenino
+                          option(value="Otro" selected=form && form.genero==='Otro'  ) Otro
+    .row 
+        .col-6 
+            .form-group.mb-4
+                label(for="telefono") Teléfono:
+                input(type="text", pattern="[0-9]*",maxlength="10", name="telefono", id="telefono"+`${nombreForm=="formE"?"E":""}`, class="form-control" value=form?form.telefono:'')
+                if obj && obj.errors
+                            - e=obj.errors.find(e=>e.path==='telefono') 
+                            if e 
+                              p(class="text-danger")= e.msg
+    .row 
+        .col-6 
+            .form-group.mb-4
+                label(for="direccion") Dirección:
+                input(type="text", name="direccion", id="direccion", class="form-control" value=form?form.direccion:'')
+                if obj && obj.errors
+                            - e=obj.errors.find(e=>e.path==='direccion') 
+                            if e 
+                              p(class="text-danger")= e.msg
+    .row 
+        .col-6 
+            .form-group.mb-4
+                label(for="email") Email:
+                input(type="email", name="email", id="email", class="form-control" , value=form?form.email:'')
+                if obj && obj.errors
+                            - e=obj.errors.find(e=>e.path==='email') 
+                            if e 
+                              p(class="text-danger")= e.msg
+    .row 
+        .col-6 
+            .form-group.mb-4
+                .row
+                    .col
+                        label(for="email") Rol:
+                .row
+                    .col
+                        input(type='checkbox', id='paciente', name='rol', value='Paciente' , checked= form && form.rol && (form.rol==='Paciente' || form.rol.includes('Paciente')))
+                        label(for='paciente' ) Paciente
+                        input(type='checkbox', id='tecnico', name='rol', value='Tecnico' , checked= form && form.rol && (form.rol==='Tecnico' || form.rol.includes('Tecnico')))
+                        label(for='tecnico' ) Técnico
+
+                        input(type='checkbox', id='bioquimico', name='rol', value='Bioquimico', checked= form && form.rol && (form.rol==='Bioquimico'|| form.rol.includes('Bioquimico')))
+                        label(for='bioquimico') Bioquímico
+
+                        input(type='checkbox', id='administrativo', name='rol', value='Administrativo', checked= form && form.rol &&  (form.rol==='Administrativo'|| form.rol.includes('Administrativo')))
+                        label(for='administrativo') Administrativo
+                        if obj && obj.errors
+                            - e=obj.errors.find(e=>e.path==='rol') 
+                            if e 
+                              p(class="text-danger")= e.msg
+    .row 
+        .col
+            button(type="submit", class="btn btn-primary mt-3") Enviar

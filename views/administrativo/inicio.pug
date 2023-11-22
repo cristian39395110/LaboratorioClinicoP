@@ -1,0 +1,31 @@
+html
+    head 
+      link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous")
+      script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
+             crossorigin="anonymous")
+      link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css")       
+      title Alfgo 
+    body
+      if modal
+          include ../modal.pug
+      .container
+        include navBar.pug 
+      .conntainer  
+        .card.mb-3(style="max-width: 540px")
+           .row.g-0
+             .col-md-4
+               img.img-fluid.rounded-start(src="..." alt="...")
+             .col-md-8
+               .card-body
+                 h5.card-title Card title
+                 p.card-text This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
+                 p.card-text
+                   small.text-body-secondary Last updated 3 mins ago    
+    script.   
+         const modal1=("#{modal}"!=="false")
+         if(modal1){
+         const miModal = new bootstrap.Modal(document.getElementById('miModal'));
+           miModal.show();
+           }   
+         

@@ -1,0 +1,23 @@
+.container
+        .row
+          .col-md-6.offset-md-3
+            h2 Cambiar Contraseña
+            form(method="post" action=`/cambiarPass?_method=put&&render=${nav}`)
+              .form-group
+                label(for="passActual") Contraseña Actual
+                input.form-control(type="password" name="passActual" id="passActual" required value= opc?opc.passActual:'')
+                if errors
+                 - e=errors.find(e=>e.path==='passActual') 
+                 if e 
+                   p(class="text-danger")= e.msg
+              .form-group
+                label(for="nuevaPass") Nueva Contraseña
+                input.form-control(type="password" name="nuevaPass" id="nuevaPass" required value= opc?opc.nuevaPass:'')
+              .form-group
+                label(for="nuevaPass2") Confirmar Nueva Contraseña
+                input.form-control(type="password" name="nuevaPass2" id="nuevaPass2" required value= opc?opc.nuevaPass2:'')
+                if errors
+                 - e=errors.find(e=>e.path==='nuevaPass') 
+                 if e 
+                   p(class="text-danger")= e.msg
+              button.btn.btn-primary(type="submit") Cambiar Contraseña

@@ -1,0 +1,216 @@
+doctype html
+html
+  head
+    title Orden de Trabajo de Laboratorio Médico
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css")
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.min.js")
+    link(href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css", rel="stylesheet")
+    script(src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js")
+
+  body
+    .custom-container.mt-5
+      h1 Eliminar Orden de Trabajo de Laboratorio Médico
+      form
+        
+        .custom-form-group
+          label(for="cedula_paciente" class="input-group-prepend") Documento del Paciente:
+        .custom-form-group.input-group
+          input.custom-input(type="text", class="form-control", id="cedula_paciente", name="cedula_paciente", required)
+          div.input-group-append
+            button.custom-button(type="button" class="btn btn-primary ml-4" id="verificar") Cargar
+        
+        .custom-form-group
+           div(id="resultados")
+      
+        br
+        br
+     
+        .custom-form-group
+           table(id="tablaExamenes" class="table table-striped")
+      
+           thead
+             tr
+                td 
+                td 
+                td 
+                td 
+           tbody    
+        br
+        br
+
+        br
+        br
+        
+        button(type="submit", class="btn btn-primary", id="generar", style="display: none;") Generar Orden
+
+  script.
+
+    const searchInput = document.getElementById('cedula_paciente');
+    const resultadosDiv = document.getElementById('resultados');
+    document.getElementById('verificar').addEventListener('click', () => {
+        const searchTerm = searchInput.value;
+        tablaExamenes.innerHTML = ''; // Limpiamos la tabla
+     
+        fetch('/pacientes/buscarinout?term=' + searchTerm)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.ordenes.length === 0) {
+                
+               
+               const search=data.pacientes[0].id;
+               
+               fetch('/pacientes/buscarordenes?term=' + search)
+                .then((response)=> response.json())
+                .then((datos)=> {
+                   const combinedData = [...data.pacientes, ...datos.ordenes];
+                   //datos.ordenes.forEach((orden) => {
+                  const documento=combinedData[0].documento;
+                  combinedData.forEach((item) => {
+                     let fecha = item.createdAt; // Usar createdAt en lugar de createdAd
+                   if (fecha) {
+                     fecha = new Date(fecha).toISOString().split('T')[0];
+                     } else {
+                     console.error('La propiedad createdAt no está definida en los datos.');
+                    }
+                    console.log(datos,"datos");
+                    console.log(data,"datas");
+
+                   const row = tablaExamenes.insertRow();
+                   const cell1 = row.insertCell(0);
+                   const cell2 = row.insertCell(1);
+                   const cell3 = row.insertCell(2);
+                    const cell4 = row.insertCell(3); 
+                    const cell5 = row.insertCell(4); 
+                   //cell1.innerHTML = orden.id;
+                   cell1.innerHTML = documento;
+                   cell2.innerHTML = item.medico;
+                   cell3.innerHTML = item.diagnostico;
+                   
+                   cell4.innerHTML=fecha;
+                   const eliminarButton = document.createElement('button');
+                   eliminarButton.innerText = 'Eliminar';
+                   eliminarButton.className = 'btn btn-danger';
+                   eliminarButton.addEventListener('click', () => {
+                    
+                      eliminarOrden(item.id); // Llama a la función para eliminar la orden
+                    });
+
+                    cell5.appendChild(eliminarButton);
+                  
+
+                 });
+             
+                });
+
+
+            }
+            else{
+             
+               let  search=data.ordenes[0].usuarioId;
+              
+               fetch('/pacientes/buscarpaciente?term=' + search)
+               
+                .then((response)=> response.json())
+                .then((datos)=> {
+                  let fecha = data.ordenes[0]?.createdAt; // Usar createdAt en lugar de createdAd
+                   if (fecha) {
+                     fecha = new Date(fecha).toISOString().split('T')[0];
+                     } else {
+                     console.error('La propiedad createdAt no está definida en los datos.');
+                    }
+               console.log(fecha,datos,"ordenes");
+              const row = tablaExamenes.insertRow();
+              const cell1 = row.insertCell(0);
+              const cell2 = row.insertCell(1);
+              const cell3 = row.insertCell(2);
+               const cell4 = row.insertCell(3); 
+               const cell5 = row.insertCell(4); 
+
+              cell1.innerHTML = datos.paciente.documento;
+              cell2.innerHTML =data.ordenes[0].medico;
+              cell3.innerHTML = data.ordenes[0].diagnostico;
+              
+              cell4.innerHTML = data.ordenes[0].fecha;
+              const eliminarButton = document.createElement('button');
+              eliminarButton.innerText = 'Eliminar';
+              eliminarButton.className = 'btn btn-danger';
+              eliminarButton.addEventListener('click', () => {
+                
+              eliminarOrden(data.ordenes[0].id); // Llama a la función para eliminar la orden
+            });
+               
+              cell5.appendChild(eliminarButton);
+              
+           });
+          
+            }
+          })
+          .catch((error) => {
+            console.error('Error al cargar las órdenes: ', error);
+          });
+      });
+
+    
+    function resultadoClickHandler(resultado) {
+      console.log(resultado );
+      if (resultado.usuarioId===undefined) {
+         searchInput.value = resultado.documento;
+         } else  {
+                searchInput.value = resultado.id;
+
+        }
+
+         resultadosDiv.innerHTML = '';
+        resultadosDiv.style.color = '';
+       }
+   
+    searchInput.addEventListener('input', () => {
+     resultadosDiv.innerHTML = ''; // Borra los resultados anteriores
+     tablaExamenes.innerHTML = ''; 
+     const searchTerm = searchInput.value;
+    
+      fetch('/pacientes/buscarinout?term=' + searchTerm)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        resultadosDiv.innerHTML = ''; // Borra los resultados anteriores
+        
+      data.pacientes.forEach(paciente => {
+        const resultadoP = document.createElement('p');
+        resultadoP.textContent = `Paciente: ${paciente.documento}`;
+        resultadoP.addEventListener('click', () => resultadoClickHandler(paciente));
+        resultadosDiv.appendChild(resultadoP);
+      });
+      data.ordenes.forEach(orden => {
+        const resultadoP = document.createElement('p');
+        resultadoP.textContent = `Orden: ${orden.id}`;
+        resultadoP.addEventListener('click', () => resultadoClickHandler(orden));
+        resultadosDiv.appendChild(resultadoP);
+     
+      });
+      })
+      .catch(error => {
+        console.error('Error al obtener resultados: ', error);
+      });
+     });
+    function eliminarOrden(id) {
+        let ordenId = id;
+        let sear=id;
+        console.log(sear,"que mierdas");
+      fetch('/examenes/eliminadoLogico/', {
+           method: 'POST',
+           headers: {
+           'Content-Type': 'application/json', // Establece el tipo de contenido
+        },
+        body: JSON.stringify({ term: sear }), // Envía datos en el cuerpo de la solicitud
+        })
+      .then(response => response.json())
+      .then(data => {
+        console.log("puto");
+        console.log(data);
+       })
+      .catch(error => {
+         console.error('Error al obtener resultados: ', error);
+          });
+        }

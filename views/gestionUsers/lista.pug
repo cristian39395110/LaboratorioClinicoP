@@ -1,0 +1,40 @@
+include navBar.pug
+.container 
+  table#example.display(style="width:100%")
+    thead
+      tr
+        th Nombre y apellido
+        th Documento
+        th Matrícula
+        th Email
+        th 
+        th
+    if usuarios
+      tbody
+        each u in usuarios
+          tr
+            td= `${u.nombre } ${u.apellido}`
+            td= u.documento 
+            td= u.matricula 
+            td= u.email 
+            td 
+              form(action=`/vistaGestionUsers/eliminar?_method=delete` method="post")
+                      input(type="hidden" name="id" value=u.id)
+                      input(type="submit" value="Eliminar" class="btn btn-primary")
+            td 
+              form(action=`/vistaGestionUsers/editar` method="get")
+                      input(type="hidden" name="id" value=u.id)
+                      input(type="submit" value="Editar" class="btn btn-primary")          
+    tfoot
+      tr
+        th Nombre y apellido
+        th Documento
+        th Matrícula
+        th Email 
+        th
+        th 
+
+script(src="https://code.jquery.com/jquery-3.7.0.js") 
+script(src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js")         
+script. 
+  new DataTable('#example'); 

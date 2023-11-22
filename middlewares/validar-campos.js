@@ -14,10 +14,21 @@ const validarCampos=(req,res,next)=>{
     next() ;
 }
 
+const validarCampos0=(req,res,next)=>{
 
+  const e=validationResult(req);
+
+  if(!e.isEmpty()){
+    console.log("ok")
+    console.log(e.errors)
+     return req.renderizar(e.errors)
+    }
+    
+  next() ;// para q siga con el próximo middleware y si no hay otro middleware va a seguir con el controlador  
+}
 
 const validarCampos2=(req,res,next)=>{
-    console.log("entro");
+  
     const result=validationResult(req);
    
     
@@ -31,11 +42,11 @@ const validarCampos2=(req,res,next)=>{
         const {nombre,apellido,documento,genero,telefono,direccion,email,embarazo}=req.body;
 
         req.session.valoresForm={nombre,apellido,documento,genero,telefono,direccion,email,embarazo};
-        console.log("calores del dormulario  ",req.session.valoresForm);
+        console.log("valores del formulario  ",req.session.valoresForm);
         return res.redirect('/admins');
       }
     next() ;  
 }
 
 
-module.exports={validarCampos,validarCampos2};
+module.exports={validarCampos,validarCampos2,validarCampos0};

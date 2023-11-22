@@ -1,0 +1,63 @@
+.container 
+    .row
+        .col-4#determinacion
+            div
+                h2  Determinación 
+            div
+                .row
+                    .col-lg-4.col-md-6.col-sm-12
+                        label(for=`nombre-${i}`) Nombre:
+                        input(required class="form-control" type="text" name=`nombrey${i}` value= form && form.determinaciones ? form.determinaciones[i].determinacion.nombre: "")
+                .row
+                    .col-lg-4.col-md-6.col-sm-12
+                        label(for=`valorMiny${i}`) Valor Mínimo:
+                        input(required class="form-control" type="number" name=`valorMiny${i}` step="0.1" value= form && form.determinaciones ? form.determinaciones[i].determinacion.valorMin: "")
+                    .col-lg-4.col-md-6.col-sm-12
+                        label(for=`valorMaxy${i}`) Valor Máximo:
+                        input(required class="form-control" type="number" name=`valorMaxy${i}` step="0.1" value= form && form.determinaciones ? form.determinaciones[i].determinacion.valorMax: "")
+                .row
+                    .col-lg-4.col-md-6.col-sm-12
+                        label(for=`unidadMediday${i}`) Unidad de Medida:
+                        input(required="" class="form-control" type="text" name=`unidadMediday${i}` value= form && form.determinaciones ? form.determinaciones[i].determinacion.unidadMedida: "")
+                - if(form.determinaciones[i][`errorDetValor`])
+                 .row
+                    .alert.alert-danger
+                        p Los rangos se solapan.
+                        
+        .col#valoresReferencia
+            .row.align-items-center
+                .md-6.d-flex.justify-content-center
+                    h2 Valores de referencia
+            div(class="accordion" id=`ac${i}`)
+                - let arr=["Hombre","Mujer","Embarazada"]
+                - for (let r = 0; r < 3; r++)
+                    .accordion-item
+                        h2(class="accordion-header")
+                            button(class="accordion-button colapsed" type="button" data-bs-toggle="collapse" data-bs-target=`#panelsStayOpen-collapsesac2-${r}${i}` aria-expanded="true" aria-controls=`panelsStayOpen-collapsesac2-${r}${i}`)= arr[r] 
+                        div(id=`panelsStayOpen-collapsesac2-${r}${i}` class="accordion-collapse collapse show")
+                            div(id=`body-ac2-${r}` class=`accordion-body`)    
+                                .container
+                                - let fila=0
+                                    table
+                                      thead
+                                        tr
+                                          th Edad Min
+                                          th Edad Max
+                                          th Valor Min
+                                          th Valor Max
+                                      tbody(id=`ac2-${r}${i}`)
+                                       - if(form.determinaciones[i][arr[r].toLowerCase()].length!==0)
+                                         - for (fila=0; fila< form.determinaciones[i][arr[r].toLowerCase()].length;fila++)
+                                           tr
+                                             each celda in form.determinaciones[i][arr[r].toLowerCase()][fila]
+                                               td
+                                                 input(class="form-control" type="number" required name=`${arr[r]}${fila}filay${i}` value=celda)
+
+                                    button(type="button" id=`btn${arr[r]}${i}` class="btn btn-success btn-sm" ultimaFila=`${fila}`)
+                                      i(class="bi bi-plus")
+                                    - if(form.determinaciones[i][`error${arr[r]}${i}`])
+                                      .alert.alert-danger
+                                        p Los rangos se solapan.    
+
+                                                      
+                                             

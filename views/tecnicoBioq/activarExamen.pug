@@ -1,0 +1,40 @@
+include navBar.pug
+.container 
+  table#example.display(style="width:100%")
+    thead
+      tr
+        th Nombre
+        th Tipo examen
+        th Tipo muestra
+        th 
+    - console.log(examenes)
+    - console.log("------------------------------------")
+    - console.log(examenes[0].TipoMuestra)    
+    if examenes
+      tbody
+        each e in examenes
+         if e
+          tr
+            td= e.nombre 
+            td= e.TipoExamen?e.TipoExamen.nombre:'' 
+            td= e.TipoMuestra?e.TipoMuestra.nombre:''
+            td 
+              if e.deletedAt
+                form(action=`/vistaTecBioq/activarExamen` method="post")
+                      input(type="hidden" name="id" value=e.id)
+                      input(type="submit" value="Activar" class="btn btn-primary")
+              else 
+                form(action=`/vistaTecBioq/desactivarExamen` method="post")
+                      input(type="hidden" name="id" value=e.id)
+                      input(type="submit" value="Desactivar" class="btn btn-primary")
+    tfoot
+      tr
+        th Nombre
+        th Tipo de examen
+        th Tipo de muestra
+        th Activar / Desactivar
+
+script(src="https://code.jquery.com/jquery-3.7.0.js") 
+script(src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js")         
+script. 
+  new DataTable('#example'); 

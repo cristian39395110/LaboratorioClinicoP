@@ -1,0 +1,37 @@
+html
+    head
+      link(rel='stylesheet', href="/stylesheets/stylesordenes.css")
+      link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN", crossorigin="anonymous")
+      script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js", integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL", crossorigin="anonymous")
+      link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css") 
+      title Algo
+      link(rel='stylesheet', href='/stylesheets/navbar.css')
+    body
+      img.imagen-centrada(src='/img/nombreLab.png', alt='Titulo') 
+      nav.navbar.navbar-expand-lg.bg-body-tertiary
+        .container
+          a.navbar-brand(href='#') Gestion de Orden
+          button.navbar-toggler(type='button', data-bs-toggle='collapse', data-bs-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
+            span.navbar-toggler-icon
+          #navbarSupportedContent.collapse.navbar-collapse
+            ul.navbar-nav.me-auto.mb-2.mb-lg-0
+              li.nav-item
+                a.nav-link(href="/vistaAdmin/inicio")
+                  img.inicio(src='/img/home.ico', alt='Inicio')
+              li.nav-item.dropdown
+                a.nav-link.dropdown-toggle(href='#', role='button', data-bs-toggle='dropdown', aria-expanded='false') Ordenes
+                ul.dropdown-menu
+                  li
+                    a.dropdown-item(href="/orden/crearorden") Crear Orden
+                  li
+                    a.dropdown-item(href='/vistaAdmin/listaOrdenes') Actualizar Orden
+                  li
+                    a.dropdown-item(href="/examenes/eliminarorden") Eliminar Orden 
+              li.nav-item.dropdown.position-absolute.top-1.end-0
+                a.nav-link.dropdown-toggle(href='#', role='button', data-bs-toggle='dropdown', aria-expanded='false')
+                 i(class="bi bi-list")
+                ul.dropdown-menu 
+                  li 
+                    a.dropdown-item(href="/cambiarPass?render=cambiarPass") Cambiar contraseña
+                  li 
+                    a.dropdown-item(href="/salir") Cerrar sesión   

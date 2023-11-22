@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       Determinacion.hasMany(models.ValorReferencia)
       Determinacion.hasMany(models.ExamenDeterminacion)
       Determinacion.belongsToMany(models.Examen,{through:"ExamenDeterminacion"})
-
+      Determinacion.hasMany(models.Resultado) 
     }
   }
   Determinacion.init({

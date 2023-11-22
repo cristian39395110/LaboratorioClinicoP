@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const{response}=require('express');
-const {Determinacion,Resultado,ValorReferencia}=require("../models")
+const {Determinacion,Resultado,ValorReferencia,Auditoria}=require("../models")
 
 
 
@@ -19,7 +19,9 @@ const detPost=async(req,res=response)=>{
      try{ 
         
         const {nombre,unidadMedida,valorMin,valorMax,comentarios}=req.body;
-      await Determinacion.create({nombre,unidadMedida,valorMin,valorMax,comentarios});
+      const au=await Determinacion.create({nombre,unidadMedida,valorMin,valorMax,comentarios});
+      await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'determinaciones',operacion:'insert',detalleAnterior:JSON.stringify(au._previousDataValues),detalleNuevo:JSON.stringify(au.dataValues)})
+        
       return res.render('tecnicoBioq/formDeterminacion',{modal:"Determinación agregada."})}
     catch{
         console.log(error);
@@ -31,7 +33,9 @@ const detPost=async(req,res=response)=>{
 
 const detPostidexamen=async(req,res=response)=>{
     try{ const {examenId,nombre,unidadMedida,valorMin,valorMax,comentarios}=req.body;
-     await Determinacion.create({nombre,unidadMedida,valorMin,valorMax,comentarios,examenId});
+     const au=await Determinacion.create({nombre,unidadMedida,valorMin,valorMax,comentarios,examenId});
+     await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'determinaciones',operacion:'insert',detalleAnterior:JSON.stringify(au._previousDataValues),detalleNuevo:JSON.stringify(au.dataValues)})
+      
      return res.json({msg:"Determinacion insertada en la DB Con su Examen"})}
    catch{
        console.log(error);
@@ -66,6 +70,8 @@ console.log(error);
 const activarDeterminacion=async(req,res)=>{
     const{id}=req.body
     await Determinacion.restore({where: {id}})
+    await ValorReferencia.restore({ where: { determinacionId: id } });
+    await Resultado.restore({ where: { determinacionId: id } }); 
 
       const determinaciones=await detGetTodas()
       res.render('tecnicoBioq/activarDeter',{determinaciones})
@@ -76,7 +82,7 @@ const activarDeterminacion=async(req,res)=>{
 const desactivarDeterminacion=async(req,res)=>{
     const{id}=req.body;
 
-    await ValorReferencia.destroy({ where: { determinacionId: id } });
+    /* await ValorReferencia.destroy({ where: { determinacionId: id } });
     await ValorReferencia.update(
         { determinacionId: null },
         { where: { determinacionId: id } }
@@ -86,8 +92,10 @@ const desactivarDeterminacion=async(req,res)=>{
     await Resultado.update(
         { determinacionId: null },
         { where: { determinacionId: id } }
-      ); 
-    await Determinacion.destroy({where: {id}})
+      );  */
+      await ValorReferencia.destroy({ where: { determinacionId: id } });
+      await Resultado.destroy({ where: { determinacionId: id } }); 
+      await Determinacion.destroy({where:{id}})
       const determinaciones=await detGetTodas()
       res.render('tecnicoBioq/activarDeter',{determinaciones})
 

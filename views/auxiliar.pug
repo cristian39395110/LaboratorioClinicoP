@@ -1,0 +1,310 @@
+doctype html
+html
+  head
+    title Orden de Trabajo de Laboratorio Médico
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css")
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.min.js")
+    link(href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css", rel="stylesheet")
+    script(src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js")
+
+  body
+    .custom-container.mt-5
+      h1 Orden de Trabajo de Laboratorio Médico
+      form        
+        .custom-form-group
+          label(for="cedula_paciente" class="input-group-prepend") Documento del Paciente:
+        .custom-form-group.input-group
+          input.custom-input(type="text", class="form-control", id="cedula_paciente", name="cedula_paciente", required)
+          div.input-group-append
+            button.custom-button(type="button" class="btn btn-primary ml-4" id="verificar") Verificar
+            button.custom-button(type="button" class="btn btn-primary ml-4", id="registrar", style="display: none;") Registrar
+
+        .custom-form-group
+           div(id="resultados")
+        
+        br
+
+        .custom-form-group
+          label(for="fecha_pedido") Fecha del Pedido Médico:
+          input(type="date", class="form-control", id="fecha_pedido", name="fecha_pedido", required)
+        br
+        br
+        .custom-form-group
+          label(for="diagnostico") Diagnóstico:
+          textarea.custom-textarea(id="diagnostico", name="diagnostico", class="form-control", rows="4", required)
+        br
+        br
+        h2.mt-4 Exámenes a Realizar
+
+        .custom-form-group
+           label(for="examen1") Examen 1:
+           select(id="examen1", class="form-control", name="examen1")
+             option(value="", disabled, selected) Selecciona un examen
+             each examen in examen1
+                option(value=examen.nombre, data-tiempo=examen.demora,data-id=examen.tipoMuestraId) #{examen.nombre}
+           table(id="tablaExamenes" class="table table-striped")
+           thead
+                tr 
+                th 
+                th 
+           tbody    
+        br
+        br
+
+
+        // Agrega más campos de examen según sea necesario
+
+        h2.mt-4 Muestras Requeridas
+        label(for="muestras")
+          #muestras_requeridas 
+        br
+        br
+
+        .custom-form-group
+          label(for="fecha_resultados") Fecha de Resultados:
+          #resul
+        br
+        br
+        
+        button(type="submit", class="btn btn-primary", id="generar", style="display: none;") Generar Orden
+
+  script.
+
+    const searchInput = document.getElementById('cedula_paciente');
+    const resultadosDiv = document.getElementById('resultados');
+    const tablaExamenes = document.getElementById('tablaExamenes');
+    const muestrasRequeridas=document.getElementById('muestras_requeridas');
+    const textoexamen=document.getElementById('examen1');
+   const generar=document.getElementById('generar');
+    const resul=document.getElementById('resul');
+    const examenesSeleccionados = [];
+     const muestrasServidor = new Set();
+
+   const fechas=[];
+
+    const muestrasSet = new Set();
+    document.querySelectorAll('input[name="muestrasRequeridas"]').forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+      if (checkbox.checked) {
+        muestrasRequeridas.add(checkbox.value);
+      } else {
+        muestrasRequeridas.delete(checkbox.value);
+      }
+      });
+     });
+
+    function resultadoClickHandler(paciente) {
+    
+     searchInput.value = paciente.documento;
+     resultadosDiv.innerHTML = '';
+     resultadosDiv.style.color = '';
+    }
+
+     searchInput.addEventListener('input', () => {
+       resultadosDiv.style.color = '';
+     const searchTerm = searchInput.value;
+      fetch('/pacientes/encontrar?term=' + searchTerm)
+      .then(response => response.json())
+      .then(data => {
+        resultadosDiv.innerHTML = ''; // Borra los resultados anteriores
+        data.forEach(paciente => {
+          const resultadoP = document.createElement('p');
+          resultadoP.textContent = paciente.documento;
+          // Agrega un manejador de clic al resultado
+          resultadoP.addEventListener('click', () => resultadoClickHandler(paciente));
+          resultadosDiv.appendChild(resultadoP); // Agrega el resultado al contenedor de resultados
+        });
+      })
+      .catch(error => {
+        console.error('Error al obtener resultados: ', error);
+      });
+     });
+       const examenes = !{JSON.stringify(examen1)};
+       console.log(examenes+"aca estoy"); // Convierte las opciones de JSON del backend
+    $(document).ready(function() {
+      $('#examen1').select2({
+       data: examenes,
+       placeholder: 'Selecciona un examen', // Mensaje para la opción por defecto
+       allowClear: true, // Permite borrar la selección
+       width: '100%', // Ajusta el ancho del select
+     });
+
+     $('#examen1').select2({ 
+      dropdownAutoWidth : true,
+      tags: true
+    });
+    });
+
+  
+
+    $('#examen1, #examen2').on('change', function() {
+      
+      const seleccionExamen1 = $('#examen1').val(); // Esto te dará el nombre del examen
+      const idExamen1 = $('#examen1 option:selected').data('id'); 
+       const tiempo = $('#examen1 option:selected').data('tiempo'); 
+      examenesSeleccionados.push({ idExamen: idExamen1, nombre: seleccionExamen1 });
+      console.log(seleccionExamen1 +"...........");
+       
+       if (seleccionExamen1) {
+          function sumarDiasAFecha(dias) {
+              const hoy = new Date();
+              hoy.setDate(hoy.getDate() + dias);
+
+              const dia = hoy.getDate().toString().padStart(2, '0');
+              const mes = (hoy.getMonth() + 1).toString().padStart(2, '0'); // Sumamos 1 al mes ya que en JavaScript los meses van de 0 a 11.
+              const anio = hoy.getFullYear();
+
+              return `${dia}/${mes}/${anio}`;
+            }
+          console.log(tiempo,"holaa");  
+          let dia=sumarDiasAFecha(tiempo);
+         const newRow = tablaExamenes.insertRow();
+         newRow.innerHTML = `
+         <td>${seleccionExamen1}</td>
+         <td>${dia}</td>
+         <td><button class="btn btn-danger" onclick="eliminarFila(this)">Eliminar</button></td>
+         `;
+         fechas.push(dia);
+         console.log(fechas);
+        
+          const fechasDate = fechas.map(fechaStr => {
+           const [dia, mes, anio] = fechaStr.split('/'); // Divide la cadena en día, mes y año
+           return new Date(anio, mes - 1, dia); // Resta 1 al mes, ya que en JavaScript los meses son 0-indexados
+           });  
+
+               // Encuentra la fecha más grande
+           const fechaMasLejana = new Date(Math.max(...fechasDate));
+           resul.innerHTML=fechaMasLejana.toISOString().split('T')[0];
+           console.log("Fecha más grande:", fechaMasLejana.toISOString().split('T')[0]);
+        }
+          fetch('/examenes/cargarmuestras', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+             },
+            body: JSON.stringify({ examen1: idExamen1}),
+           })
+            .then(response => {
+               if (!response.ok) {
+                 throw new Error('Network response was not ok');
+                  }
+                  return response.text();
+                })
+            .then(data => {
+               const jsonString = data;
+               const jsonObject = JSON.parse(jsonString);
+               const nombre = jsonObject.nombre;
+              if (!muestrasSet.has(nombre)) {
+               muestrasSet.add(nombre);  
+               
+             
+               console.log({data})  
+               const checkboxContainer = document.createElement('div');
+               checkboxContainer.className = 'form-check'; // Agregar la clase form-check
+               const checkboxInput = document.createElement('input');
+               checkboxInput.type = 'checkbox'; // Cambiar a tipo checkbox
+               checkboxInput.name = 'muestrasRequeridas';
+               checkboxInput.value = nombre;
+               checkboxInput.className = 'form-check-input'; // Agregar la clase form-check-input
+               const label = document.createElement('label');
+               label.textContent = nombre;
+               label.className = 'form-check-label'; // Agregar la clase form-check-label
+               label.appendChild(checkboxInput);
+               checkboxContainer.appendChild(label);
+               muestrasRequeridas.appendChild(checkboxContainer);
+              }//---------------
+   
+                  //---------------
+              })
+            .catch(error => {
+              console.error('Error al cargar muestras: ', error);
+             });
+             });
+         function eliminarFila(btn) {
+               const row = btn.parentNode.parentNode;
+               const dias = row.querySelector('td:nth-child(2)').textContent; // Recupera el valor del segundo td (el día)
+               const index = fechas.indexOf(dias);
+                 console.log(fechas+"sin borra") 
+               if (index > -1) {
+                  fechas.splice(index, 1); // Elimina el día de la matriz fechas
+                 }    
+                console.log(fechas.length+".sadaasda");
+                 const nombreExamen = row.querySelector('td:first-child').textContent;
+                 const examenIndex = examenesSeleccionados.findIndex(examen => examen.nombre === nombreExamen);
+                 if (examenIndex > -1) {
+                      examenesSeleccionados.splice(examenIndex, 1);
+                  }
+                 row.remove();
+                 
+                if (fechas.length>1) {
+               //---------------------------------------------------------------------
+                 function encontrarFechaMasAlta(fechas) {
+                   const fechasDate = fechas.map(fechaStr => {
+                   const [dia, mes, anio] = fechaStr.split('/'); // Divide la cadena en día, mes y año
+                   return new Date(anio, mes - 1, dia); // Resta 1 al mes, ya que en JavaScript los meses son 0-indexados
+                  });
+                   const fechaMasAlta = new Date(Math.max(...fechasDate));
+                   return fechaMasAlta.toISOString().split('T')[0];
+                    }
+                  
+                  const fechaMasAlta = encontrarFechaMasAlta(fechas);
+                  
+                  resul.innerHTML=fechaMasAlta;
+                  
+                }
+                 if (fechas.length==1) 
+                 resul.innerHTML=dias;
+                 else
+                 resul.innerHTML=""; 
+
+               
+
+                
+              
+               
+                }
+
+      const verific = document.getElementById('verificar');
+
+  
+      verific.addEventListener('click', function() {
+
+      console.log("asfsadafs");
+      const documento=searchInput.value;
+        fetch('/pacientes/verificar', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+             },
+            body: JSON.stringify({ documento: documento}),
+           })
+            .then(response => {
+               if (!response.ok) {
+                 throw new Error('Network response was not ok');
+                  }
+                  return response.text();
+                })
+            .then(data => {
+                  
+                 if (data.length > 2) {
+                    console.log("llego");
+                     document.getElementById('generar').style.display = 'inline-block';
+                      resultadosDiv.innerHTML = "Paciente Registrado Correctamente";
+                      resultadosDiv.style.color = "green";
+                 }
+                 else 
+                 {
+                   console.log("No llego");
+                   resultadosDiv.innerHTML = "Registre al Paciente Para Poder Crear Orden";
+                   resultadosDiv.style.color = "red";
+                 document.getElementById('registrar').style.display = 'inline-block';
+                 document.getElementById('generar').style.display = 'none';
+                
+                 }
+              })
+            .catch(error => {
+              console.error('Error al cargar muestras: ', error);
+             });
+          
+             }); 

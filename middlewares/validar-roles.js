@@ -17,9 +17,21 @@ if(t) return res.status(401).json({
 next();
 }
 
+//tieneRole('ADMIN_ROLE','VENTAS_ROLE'),
+const tieneRole=(...roles)=>{
+   return (req,res,next)=>{
 
+   if(!req.usuario.Rols.some(element => {
+      return roles.includes(element.nombre)
+   }))  
+   return  res.redirect("/")
+   
+   else  next(); 
+       }
+   
+}
 
 
 module.exports={
-   esAdminRol
+   esAdminRol,tieneRole
 }

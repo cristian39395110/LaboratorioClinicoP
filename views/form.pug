@@ -23,6 +23,8 @@ form(action=`${ruta}` method="post" name=`${nombreForm}` novalidate)
                 .alert.alert-danger #{errors.documento}
     .form-group.mb-4
         label(for="fechaNacimiento"+`${nombreForm=="formE"?"E":""}`) Fecha de Nacimiento:
+        - let currentDate = new Date();
+        - console.log("ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",currentDate.getFullYear())
         input(type="date",min="1873-01-01",max= currentDate, name="fechaNacimiento", id="fechaNacimiento"+`${nombreForm=="formE"?"E":""}`, class="form-control", required, value=valoresForm && valoresForm.fechaNacimiento ? valoresForm.fechaNacimiento : "")
         div.invalid-feedback Ingrese una fecha válida.
         if Object.keys(errors).length > 0

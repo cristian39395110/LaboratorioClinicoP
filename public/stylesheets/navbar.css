@@ -1,0 +1,46 @@
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-image: url('../img/fondo2.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.imagen-centrada {
+    display: block;
+    margin: 0 auto;
+    width: 400px;
+    height: auto;
+    border-radius: 50%;
+}
+
+img.inicio {
+    height: 30px;
+    width: auto;
+  }
+
+.navbar {
+    border: #020202 solid 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+/* Estilos para el elemento <li> */
+.nav-item.position-absolute.top-1.end-0 {
+    list-style: none;
+    /* Elimina los marcadores de lista, si los hubiera */
+}
+
+.nav-item.position-absolute.top-1.end-0 a.nav-link {
+    margin: 5px 0 5px 5px;
+    color: red;
+    background-color: rgb(212, 212, 212);
+    border: 1px solid #020202;
+    position: relative;
+    top: 25%;
+    transform: translateY(-17%);
+}

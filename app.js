@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 var createError = require('http-errors');
 const session = require('express-session');
 var express = require('express');
@@ -7,6 +8,7 @@ const methodOverride =require( 'method-override');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const { validarJWT, tieneRole } = require('./middlewares');
 
 var app = express();
 
@@ -28,31 +30,23 @@ app.use(
   })
 );
 
-app.get('/', (req, res) => {
-  res.render('inicioOrden'); // Para Probar la pagina inicioOrdemn
-});
-app.get('/actualizar-orden', (req, res) => {
- const ok = true;
-  res.render('inicioOrden',{ok}); 
-});
-app.get('/formulario', (req, res) => {
- console.log("holaa") ;
- const k=true;
-res.render('inicioOrden',{k,ok:true})
 
-}); 
+
 //app.use('', require('./routes/login'));
-app.use('/users', require('./routes/users'));
-app.use('/pacientes',require('./routes/pacientes'));
-app.use('/admins',require('./routes/admins'));
+
+
+app.use("/examenes", require('./routes/examenes'));
+app.use("/examenes", require('./routes/orden'));
 app.use('/administradorDB',require('./routes/administradorDB'));// crea un usuario con su respectivo rol
-app.use('/examenes',require('./routes/examenes'));//devuelve Examenes
-app.use('/orden',require('./routes/orden'));// crea una orden
-//app.use('/muestra',require('./routes/muestra'));// une orden con muestra
-app.use('/examenordenes',require('./routes/examenordenes'));// Ingresa un Examen  y Unda Orden a Examen Orden tambien crea la muestra 
-app.use('/determinaciones',require('./routes/determinaciones')); //aca esta el post y el get de Determinacion
-app.use('/valorReferencia',require('./routes/valorreferencia'));
-app.use('/vistaTecBioq',require('./routes/vistaTecBioq'));
+
+app.use('/pacientes',[validarJWT,tieneRole('Administrativo')],require('./routes/pacientes'));
+app.use('/',require('./routes/login'))
+app.use('/vistaTecBioq',[validarJWT,tieneRole('Tecnico','Bioquimico')],require('./routes/vistaTecBioq'));
+app.use('/cambiarPass',[validarJWT,tieneRole('Tecnico','Bioquimico','Administrativo','Paciente')],require('./routes/cambiarPass'));
+app.use('/vistaAdmin',[validarJWT,tieneRole('Administrativo')],require('./routes/vistaAdmin'));
+app.use('/vistaGestionUsers',[validarJWT,tieneRole('Administrativo')],require('./routes/vistaGestionUsers'));
+app.use('/orden',[validarJWT,tieneRole('Administrativo')],require('./routes/orden'));// crea una orden
+app.use('/admins',[validarJWT,tieneRole('Administrativo')],require('./routes/admins'));
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -65,8 +59,9 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
+  console.log(err)
   res.status(err.status || 500);
-  res.render('error');
+  res.render('error',{err:JSON.stringify(err)});
 });
 
 module.exports = app;

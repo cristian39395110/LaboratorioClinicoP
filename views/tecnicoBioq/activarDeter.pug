@@ -1,49 +1,39 @@
-html
-    head 
-      link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous")
-      script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
-             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
-             crossorigin="anonymous")
-      link(href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet")       
-      title Alfgo 
-    body
-      .container
-        include navBar.pug
-      .container 
-        table#example.display(style="width:100%")
-          thead
-            tr
-              th Nombre
-              th Valor mínimo
-              th Valor máximo
-              th Unidad
-              th 
-          - console.log({determinaciones})    
-          if determinaciones
-            tbody
-              each det in determinaciones
-                tr
-                  td= det.nombre 
-                  td= det.valorMin 
-                  td= det.valorMax 
-                  td= det.unidadMedida
-                  td 
-                    if det.deletedAt
-                      form(action=`/vistaTecBioq/activarDeterminacion` method="post")
-                            input(type="hidden" name="id" value=det.id)
-                            input(type="submit" value="Activar" class="btn btn-primary")
-                    else 
-                      form(action=`/vistaTecBioq/desactivarDeterminacion` method="post")
-                            input(type="hidden" name="id" value=det.id)
-                            input(type="submit" value="Desactivar" class="btn btn-primary")
-          tfoot
-            tr
-              th Nombre
-              th Tipo de muestra
-              th Tipo de examen
-              th Editar
-      
-      script(src="https://code.jquery.com/jquery-3.7.0.js") 
-      script(src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js")         
-      script. 
-        new DataTable('#example'); 
+include navBar.pug
+.container 
+  table#example.display(style="width:100%")
+    thead
+      tr
+        th Nombre
+        th Valor mínimo
+        th Valor máximo
+        th Unidad
+        th 
+    - console.log({determinaciones})    
+    if determinaciones
+      tbody
+        each det in determinaciones
+          tr
+            td= det.nombre 
+            td= det.valorMin 
+            td= det.valorMax 
+            td= det.unidadMedida
+            td 
+              if det.deletedAt
+                form(action=`/vistaTecBioq/activarDeterminacion` method="post")
+                      input(type="hidden" name="id" value=det.id)
+                      input(type="submit" value="Activar" class="btn btn-primary")
+              else 
+                form(action=`/vistaTecBioq/desactivarDeterminacion` method="post")
+                      input(type="hidden" name="id" value=det.id)
+                      input(type="submit" value="Desactivar" class="btn btn-primary")
+    tfoot
+      tr
+        th Nombre
+        th Tipo de muestra
+        th Tipo de examen
+        th Editar
+
+script(src="https://code.jquery.com/jquery-3.7.0.js") 
+script(src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js")         
+script. 
+  new DataTable('#example'); 

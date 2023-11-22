@@ -15,7 +15,10 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #3498db;
+    background-image: url('../img/fondo3.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Fondo fijo */
 }
 
 .login-container {

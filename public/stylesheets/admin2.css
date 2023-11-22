@@ -1,24 +1,40 @@
+
+/* Fondo fijo */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+  background-image: url('../img/fondo1.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Fondo fijo */
 }
 
 /* Navbar styles */
 .navbar {
-  background-color: #3498db;
+  background-color: #3498db; /* Cambio de color */
+  color: #fff; /* Texto en blanco */
   justify-content: space-between;
   position: fixed;
   top: 0;
   width: 100%;
   z-index: 100;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  border: 2px solid #020202;
 }
 
 .navbar-brand {
-  color: #fff;
-  font-size: 1.5rem;
-  text-transform: uppercase;
-  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.imagen-centrada {
+  display: block;
+  margin: 0 auto;
+  width: 400px;
+  height: auto;
+  border-radius: 50%;
 }
 
 .navbar-right {
@@ -26,63 +42,37 @@ body {
   margin-right: 20px;
 }
 
-.nav-link {
-  color: #fff;
-  font-weight: 600;
-}
-
 /* Sidebar styles */
 .sidebar {
-  background-color: #2ecc71;
+  background-color: #2ecc71; /* Cambio de color */
   color: #fff;
   width: 200px;
   position: fixed;
-  top: 53px;
+  top: 66px;
   left: 0;
-  bottom: 0;
-  padding-top: 20px;
+  bottom: 39px;
+  padding-top: 50px;
   box-shadow: 5px 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  font-size: medium;
+  border: 2px solid #020202;
 }
 
-/* Container styles */
-.container {
-  margin-top: 53px;
-}
-
-/* Main content styles */
-.main-content {
-  margin-left: 220px;
-  padding: 20px;
-}
-
-/* Footer styles */
-.footer {
-  background-color: #3498db;
-  color: #fff;
-  text-align: center;
-  padding: 10px 0;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-}
-
-/* Tabs styles */
-.nav-tabs {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-}
-
+/* Navigation link styles */
 .nav-link {
-  color: #3498db;
+  color: #fff; /* Texto en blanco */
   font-weight: 600;
-  border: 1px solid #ccc;
-  border-radius: 5px;
   padding: 10px 20px;
+  display: block;
+  text-decoration: none;
+  margin-bottom: 20px;
 }
 
+.nav-link:hover {
+  color: #ff0000; /* Cambia el color cuando se pasa el cursor (en este caso, rojo) */
+}
+
+/* Active link styles */
 .nav-link.active {
   background-color: #3498db;
   color: #fff;
@@ -96,10 +86,50 @@ form[name="formu"] {
 }
 
 #searchInput {
-  border: 1px solid #ccc;
+  border: 1px solid #080808;
   border-radius: 5px;
   padding: 5px;
   margin-right: 10px;
+}
+
+/* Container styles */
+.container {
+  margin-top: 53px;
+}
+
+/* Main content styles */
+.main-content {
+  margin-left: 220px;
+  padding: 20px;
+}
+
+#contenido {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Footer styles */
+.footer {
+  background-color: #3498db;
+  color: #fff;
+  text-align: center;
+  padding: 10px 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+  border: 2px solid #020202;
+}
+
+/* Tabs styles */
+.nav-tabs {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 150px;
 }
 
 /* Table styles */
@@ -122,9 +152,30 @@ input[type="radio"] {
 
 /* Button styles */
 button.btn-link {
-  color: #3498db;
+  color: #db3434;
   text-decoration: underline;
   background: none;
   border: none;
   cursor: pointer;
+}
+
+/* Estilo para el botón "Cerrar Sesión" con ID cerrar-sesion */
+button#cerrar-sesion {
+  font-weight: bold;
+  font-size: 10px; /* Cambia el tamaño del texto del botón a 18px o el valor deseado */
+  background-color: #ff0000; /* Cambia el color de fondo a rojo (#ff0000) o el color que desees */
+  color: #fff; /* Cambia el color del texto a blanco (#fff) o el color que desees */
+  border: 2px solid #111111; /* Cambia el borde del botón a un borde rojo de 2px o el color y grosor que desees */
+  padding: 5px; /* Cambia el relleno (padding) del botón, ajustándolo según tus necesidades */
+  border-radius: 5px; /* Agrega bordes redondeados al botón (5px o el valor que desees) */
+  text-decoration: none; /* Evita que se subraye el texto del botón */
+  cursor: pointer; /* Cambia el cursor a una mano para indicar que es un botón interactivo */
+  margin: 10px;
+}
+
+/* Cambio de estilo al pasar el cursor sobre el botón */
+button#cerrar-sesion:hover {
+  background-color: #ff3333; /* Cambia el color de fondo al pasar el cursor (por ejemplo, a un tono más claro de rojo) */
+  border: 2px solid #e6e1e1; /* Cambia el borde al pasar el cursor */
+  color: #fff; /* Cambia el color del texto al pasar el cursor */
 }

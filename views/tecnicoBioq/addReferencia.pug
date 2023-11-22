@@ -24,34 +24,74 @@ html
                         div#listaDets
                           ul
                         label(for="determinacion", class="form-label") Determinaciones existentes:
-                        input#determinacion.form-control(list="datalistOptions", name="determinacion", placeholder=arrDet.length===0?"No hay determiniaciones":"Type to search...",disabled= arrDet.length === 0)
-                        datalist(id="datalistOptions")
-                          each det in arrDet
-                            option(id=det.id)= det.nombre
-                    .col-lg-4.col-md-6.col-sm-12
-                      label(for="sexo") Sexo:
-                        input(type="radio", id="sexo-masculino", name="sexo", value="M" required)
-                        label(for="sexo-masculino") Masculino
-                        input(type="radio", id="sexo-femenino", name="sexo", value="F" required)
-                        label(for="sexo-femenino") Femenino
-                        input(type="radio", id="sexo-otro", name="sexo", value="O" required)
-                        label(for="sexo-otro") Otro
+                        input#determinacion.form-control(list="datalistOptions", name="determinacion", placeholder=arrDet &&  arrDet.length===0?"No hay determiniaciones":"Type to search...",disabled= arrDet.length === 0)
+                        if arrDet
+                          datalist(id="datalistOptions")
+                            each det in arrDet
+                               option(id=det.id)= det.nombre
+                          if errors
+                              - e=errors.find(e=>e.path==='determinacion') 
+                              if e 
+                                p(class="text-danger")= e.msg    
+                    .row        
+                      .col-lg-4.col-md-6.col-sm-12
+                        label(for="sexo") Sexo:
+                          input(type="radio", id="sexo-masculino", name="sexo", value="M" checked=opc && opc.sexo==='M' )
+                          label(for="sexo-masculino") Masculino
+                          input(type="radio", id="sexo-femenino", name="sexo", value="F" checked=opc && opc.sexo==='F')
+                          label(for="sexo-femenino") Femenino
+                          input(type="radio", id="sexo-otro", name="sexo", value="O" checked=opc && opc.sexo==='O' )
+                          label(for="sexo-otro") Otro
+                          if errors
+                            - e=errors.find(e=>e.path==='sexo') 
+                            if e 
+                              p(class="text-danger")= e.msg 
+                    .row        
+                      .col-lg-4.col-md-6.col-sm-12          
                       label(for="embarazada") ¿embarazada?
-                        select(id="embarazada", name="embarazo" required)
-                          option(value="true") Sí
-                          option(value="false") No  
-                    .col-lg-4.col-md-6.col-sm-12    
-                      label(for="unidadMedida") Edad mínima:
-                      input.form-control(type="number", name="edadMin", id="eMin",required)
-                    .col-lg-4.col-md-6.col-sm-12
-                      label(for="valorMin") Edad máxima:
-                      input.form-control(type="number", name="edadMax", id="eMax")
-                    .col-lg-4.col-md-6.col-sm-12
-                      label(for="valorMax") Valor Mínimo:
-                      input.form-control(type="number", name="valorMinimo", id="vMin")
-                    .col-lg-4.col-md-6.col-sm-12
-                      label(for="valorMax") Valor Máximo:
-                      input.form-control(type="number", name="valorMaximo", id="vMax")  
+                        select(id="embarazada", name="embarazo" )
+                          option(value="") Selecciona una opción
+                          option(value="true", selected=opc? opc.embarazo==="true":"") Sí
+                          option(value="false", selected=opc?opc.embarazo==="false":"") No
+                      if errors
+                          - e=errors.find(e=>e.path==='embarazo') 
+                          if e 
+                            p(class="text-danger")= e.msg    
+                    .row      
+                      .col-lg-4.col-md-6.col-sm-12    
+                        label(for="unidadMedida") Edad mínima:
+                        input.form-control(type="number", name="edadMin", id="eMin", value= opc?opc.edadMin:"")
+                        if errors
+                          - e=errors.find(e=>e.path==='edadMin') 
+                          if e 
+                            p(class="text-danger")= e.msg
+                      .col-lg-4.col-md-6.col-sm-12
+                        label(for="valorMin") Edad máxima:
+                        input.form-control(type="number", name="edadMax", id="eMax",value= opc?opc.edadMax:"")
+                        if errors
+                          - e=errors.find(e=>e.path==='edadMax') 
+                          if e 
+                            p(class="text-danger")= e.msg
+                    .row        
+                      .col-lg-4.col-md-6.col-sm-12
+                        label(for="valorMax") Valor Mínimo:
+                        input.form-control(type="number", name="valorMinimo", id="vMin",step="0.1" value= opc?opc.valorMinimo:"")
+                        if errors
+                          - e=errors.find(e=>e.path==='valorMinimo') 
+                          if e 
+                            p(class="text-danger")= e.msg
+                      .col-lg-4.col-md-6.col-sm-12
+                        label(for="valorMax") Valor Máximo:
+                        input.form-control(type="number", name="valorMaximo", id="vMax",step="0.1" value= opc?opc.valorMinimo:"")
+                        if errors
+                          - e=errors.find(e=>e.path==='valorMaximo') 
+                          if e 
+                            p(class="text-danger")= e.msg
+                    .row
+                      if errors
+                          - e=errors.find(e=>e.path==='solapa') 
+                          if e 
+                            p(class="text-danger")= e.msg       
                     .col-lg-4.col-md-6.col-sm-12
                       button.btn.btn-primary(type="submit" disabled= arrDet.length === 0) Enviar 
     script.   
@@ -67,9 +107,7 @@ html
            inputDet.addEventListener('input', () => {
                                  const enteredValue = inputDet.value;
                                  const options = Array.from(datalistOptions).map(option => option.value);
-                            console.log("eee ",options)
                                  if (options.length===0 || !options.includes(enteredValue)) {
-                                     console.log("eeentro ",options)
                                      inputDet.setCustomValidity('No ha seleccionado una determinación');
                                  } else {
                                    inputDet.setCustomValidity('');
@@ -78,7 +116,6 @@ html
                                  const selectedOption = Array.from(datalistOptions).find(option => option.value === inputDet.value);
                                        if (selectedOption) {
                                          selectedId = selectedOption.getAttribute('id');
-                                         console.log("a ver...",selectedId)
                                          detId.value=selectedId
                                        } else {
                                          selectedId = null;
