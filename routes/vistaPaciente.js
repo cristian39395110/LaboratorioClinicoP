@@ -34,21 +34,31 @@ router.get('/imprimir',async(req,res)=>{
     const parametroRecibido=req.query.ordenId;
 
     //const ordenes = await getOrdenPacientePorId( parametroRecibido);
-        const ordenes = await getOrdenPacientePorIdes( parametroRecibido);
+        const orde = await getOrdenPacientePorIdes( parametroRecibido);
+        const ordenes=[];
+        const result=[];
+   // const result=await listaDeResultado(parametroRecibido);
 
-    const result=await listaDeResultado(parametroRecibido);
-
-//console.log(ordenes.Resultados.Determinacion,"caca");
-ordenes.Resultados.forEach(resultado => {
-    // Acceder a la determinación asociada a este resultado
-    const determinacion = resultado.Determinacion;
-
+  
+  
+orde.Resultados.forEach(resultado => {
+   
+   const determinacion = resultado.Determinacion;
+   result.push(resultado);
+   ordenes.push(determinacion);
+   const valorref=ordenes[0].dataValues.ValorReferencia[0].valorMaximo;
+   console.log(result,"auxilio");
+    //const valorReferencia = determinacion.dataValues.ValorReferencia;
     // Aquí puedes acceder a los atributos de la determinación
-    console.log(resultado.valor);
-    console.log(determinacion.dataValues.nombre);
+    //console.log(valorReferencia);
+
+   // console.log(determinacion.dataValues.nombre);
+    //console.log(determinacion);
 });
-//console.log(result);
-    res.render('paciente/resultados',{result,ordenes});
+
+
+
+    res.render('paciente/resultados',{result,ordenes,orde});
 })
 
 

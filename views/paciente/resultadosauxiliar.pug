@@ -5,11 +5,8 @@ head
   link(rel='stylesheet', href='/stylesheets/navbar.css')
 body
   img.imagen-centrada(src='/img/nombreLab.png', alt='Titulo') 
-  
   .container
     include navBar.pug
-    h1 Doctor #{orde.medico}
-    h5 Diagnostico: #{orde.diagnostico}
     .container 
       table#example.display(style="width:100%")
         thead
@@ -18,18 +15,14 @@ body
             th Valor Ref Minimo 
             th Valor Ref Maximo 
             th Resultado
-            
         if ordenes
           tbody
             each orden in ordenes
-             each valorref in orden.dataValues.ValorReferencia
-              each res in result
-               tr
-                td= orden.nombre
-                td= valorref.valorMinimo
-                td= valorref.valorMaximo
-                td= res.valor+" "+ orden.unidadMedida
-                
+             tr
+              td= orden.nombre
+              td= orden.dataValues.ValorReferencia.valorMinimo
+              td=orden.dataValues.ValorReferencia.valorMinimo 
+              td=orden.dataValues.ValorReferencia.valorMaximo 
             
             
             

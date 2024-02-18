@@ -50,7 +50,7 @@ const getListaOrden=async()=>{
             { model: Estado },
             { model: Resultado, include: [ // Agregar la inclusión de Determinacion
             {
-              model: Determinacion
+              model: Determinacion,include:[{ model:ValorReferencia }]
             }
           ]},
             { model: ExamenOrden,
