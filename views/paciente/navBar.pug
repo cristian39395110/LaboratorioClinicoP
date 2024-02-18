@@ -1,0 +1,24 @@
+nav.navbar.navbar-expand-lg.navbar-light.bg-light
+  .container
+    a.navbar-brand(href="#") Gestion de Datos
+
+    button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-controls="navbarNav", aria-expanded="false", aria-label="Toggle navigation")
+      span.navbar-toggler-icon
+
+    #navbarNav.collapse.navbar-collapse
+      ul.navbar-nav
+        li.nav-item
+          a.nav-link(href="/vistaAdmin/inicio")
+                  img.inicio(src='/img/home.ico', alt='Inicio')
+        li.nav-item.dropdown
+          a.nav-link
+            | Orden de trabajo
+       
+        li.nav-item.dropdown.position-absolute.top-1.end-0
+          a.nav-link.dropdown-toggle(href='#', role='button', data-bs-toggle='dropdown', aria-expanded='false')
+           i(class="bi bi-list")
+          ul.dropdown-menu 
+            li 
+              a.dropdown-item(href="/cambiarPass?render=administrativo") Cambiar contraseña
+            li 
+              a.dropdown-item(href="/salir") Cerrar sesión     

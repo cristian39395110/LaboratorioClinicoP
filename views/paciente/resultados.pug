@@ -1,0 +1,40 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    link(rel="stylesheet", href=href='/stylesheets/resultados.css')
+    title Resultado de Examen Médico
+  body
+    .container
+      h1 Resultado de Examen Médico
+      #examResult
+    script(src="script.js").
+    script.
+      document.addEventListener("DOMContentLoaded", function () {
+        // Simula un resultado de examen médico (puedes cambiar los valores según sea necesario)
+        var examResultData = {
+           doctor: !{JSON.stringify(ordenes.medico)},
+           paciente:!{JSON.stringify(ordenes.Usuario.nombre)},
+          fecha: "23 de enero de 2024",
+          resultado: "Normal",
+          observaciones: "Todo en orden. Continuar con seguimiento regular."
+        };
+
+        // Crea el HTML para mostrar el resultado del examen
+        var examResultElement = document.getElementById("examResult");
+        examResultElement.innerHTML = `
+          <h2>Doctor</h2>
+          <p><strong>Doctor :</strong> ${examResultData.doctor}</p>
+          
+          <h2>Información del Paciente</h2>
+          <p><strong>Paciente:</strong> ${examResultData.paciente}</p>
+          <p><strong>Fecha:</strong> ${examResultData.fecha}</p>
+
+          <h2>Resultado del Examen</h2>
+          <p><strong>Resultado:</strong> ${examResultData.resultado}</p>
+
+          <h2>Observaciones</h2>
+          <p>${examResultData.observaciones}</p>
+        `;
+      });

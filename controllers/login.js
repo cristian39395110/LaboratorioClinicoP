@@ -34,8 +34,10 @@ const login=async(req,res=response)=>{
        
         const token=await generarJWT(usuario.id);
         req.session.token = token;
+        console.log("que paso",usuario.id); 
         switch(nombreRol){
-          case "Paciente": return res.redirect(`/pacientes`);
+          case "Paciente": const parametroEjemplo = usuario.id; // Puedes cambiar esto según tus necesidades
+          return res.redirect(`/vistaPaciente?parametro=${parametroEjemplo}`);
           case "Administrativo":return res.redirect(`/vistaAdmin/inicio`);
           case "Tecnico":return res.redirect(`/vistaTecBioq/inicio`);
           case "Bioquimico":return res.redirect(`/vistaTecBioq/inicio`);

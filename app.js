@@ -40,11 +40,22 @@ app.use("/examenes", require('./routes/orden'));
 app.use('/administradorDB',require('./routes/administradorDB'));// crea un usuario con su respectivo rol
 
 app.use('/pacientes',[validarJWT,tieneRole('Administrativo')],require('./routes/pacientes'));
-app.use('/',require('./routes/login'))
+
 app.use('/vistaTecBioq',[validarJWT,tieneRole('Tecnico','Bioquimico')],require('./routes/vistaTecBioq'));
 app.use('/cambiarPass',[validarJWT,tieneRole('Tecnico','Bioquimico','Administrativo','Paciente')],require('./routes/cambiarPass'));
 app.use('/vistaAdmin',[validarJWT,tieneRole('Administrativo')],require('./routes/vistaAdmin'));
 app.use('/vistaGestionUsers',[validarJWT,tieneRole('Administrativo')],require('./routes/vistaGestionUsers'));
+//apartir de aca estoy trabajando 
+
+
+//--------------------------------------------------------------------------------
+//LADO DEL PACIENTE 
+app.use('/',require('./routes/login'))
+app.use('/vistaPaciente',[validarJWT,tieneRole('Paciente')],require('./routes/vistaPaciente'));
+
+
+
+//------------------------------------------------------------------------------------
 app.use('/orden',[validarJWT,tieneRole('Administrativo')],require('./routes/orden'));// crea una orden
 app.use('/admins',[validarJWT,tieneRole('Administrativo')],require('./routes/admins'));
 // catch 404 and forward to error handler

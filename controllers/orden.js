@@ -1,5 +1,5 @@
 const { Sequelize} = require('sequelize');
-const {OrdenTrabajo,Usuario,Estado,Examen,ExamenOrden,Muestra,Auditoria}=require('../models');
+const {OrdenTrabajo,Determinacion,Usuario,Estado,Examen,ExamenOrden,Muestra,Auditoria,Resultado,ExamenDeterminacion,ValorReferencia}=require('../models');
 
 //const { examenesGet } = require('./examenes');
 
@@ -31,7 +31,70 @@ const getListaOrden=async()=>{
    }
 
     // const ordenes=await getOrdenes(['Informada','Esperando toma de muestra','Analitica']);
+//--------------------------------------------------------------------------------------------------
+//CONTINUACION DESPUES DE LAS VACACIONES
+    const getOrdenesPaciente=async(arr,id)=>{
+      
+      if (arr){
+        return await OrdenTrabajo.findAll({ include: [{model: Usuario,where:{id:id}},{model: Estado,where:{nombre:arr}}]});
+      }
+       
+      return await OrdenTrabajo.findAll({ include: [{model: Usuario},{model: Estado}]});
+    }  
+    //_____________________________----------------------------------------------------------------
+    const getOrdenPacientePorIdes = async (id) => {
+      try {
+        const orden = await OrdenTrabajo.findByPk(id, {
+          include: [
+            { model: Usuario },
+            { model: Estado },
+            { model: Resultado, include: [ // Agregar la inclusión de Determinacion
+            {
+              model: Determinacion
+            }
+          ]},
+            { model: ExamenOrden,
+              include: [
+                {
+                  model: Examen,
+                  include: [
+                    {
+                      model: ExamenDeterminacion
+                     
+                      
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+        });
+    
+        return orden; // Puede ser null si no se encuentra ninguna orden con el ID especificado
+      } catch (error) {
+        console.error("Error al obtener la orden de trabajo:", error);
+        throw error;
+      }
+    };
+    
+    //{-----------------------------------------}
+
+    const getOrdenPacientePorId = async (id) => {
+      try {
+        const orden = await OrdenTrabajo.findByPk(id, {
+          include: [{ model: Usuario }, { model: Estado }],
+        });
+    
+        return orden; // Puede ser null si no se encuentra ninguna orden con el ID especificado
+      } catch (error) {
+        console.error("Error al obtener la orden de trabajo:", error);
+        throw error;
+      }
+    };
+    
+//................................................................................................................................................................................................
 const getOrdenes=async(arr)=>{
+  console.log(arr);
   if (arr){
     return await OrdenTrabajo.findAll({ include: [{model: Usuario},{model: Estado,where:{nombre:arr}}]});
   }
@@ -163,7 +226,7 @@ const prueba = async (req, res) => {
 };   
 
    module.exports={
-    ordenPost,ordenesGet,getOrdenes,ordenPostCris,eliminarorden ,getListaOrden,crearorden,prueba
+    ordenPost,ordenesGet,getOrdenes,ordenPostCris,eliminarorden ,getListaOrden,crearorden,prueba,getOrdenesPaciente,getOrdenPacientePorId,getOrdenPacientePorIdes
   }
   
   

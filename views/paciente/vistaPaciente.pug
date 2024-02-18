@@ -1,0 +1,64 @@
+html
+    head 
+      link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous")
+      script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
+             crossorigin="anonymous")
+      link(href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet")       
+      title Lista Ordenes 
+      link(rel='stylesheet', href='/stylesheets/navbar.css')
+    body
+      img.imagen-centrada(src='/img/nombreLab.png', alt='Titulo') 
+      .container
+        include navBar.pug
+      .container 
+        table#example.display(style="width:100%")
+          thead
+            tr
+              th Orden
+              th Usuario
+              th Estado
+              th Medico
+              th Diagnostico
+              th
+              th
+              th
+          if ordenes
+            tbody
+              each orden in ordenes
+                tr
+                  td= orden.id
+                  td= orden.Usuario.nombre
+                  td= orden.Estado.nombre
+                  td= orden.medico
+                  td= orden.diagnostico
+                  td 
+                    form(action=`/vistaPaciente/imprimir` method="get")
+                          input(type="hidden" name="ordenId" value=orden.id)
+                          input(type="submit" value="Resultado" class="btn btn-primary")
+                  td
+                    form(action=`/examenes/eliminadoLogico/` method="post" onsubmit="return confirm('¿Realmente desea eliminar esta orden?')")
+                          input(type="hidden" name="term" value=orden.id)
+                          input(type="submit" value="Eliminar" class="btn btn-danger")
+                  td
+                    form(action=`/orden/etiqueta` method="get" target="_blank")
+                          input(type="hidden" name="orden" value=orden.id)
+                          input(type="hidden" name="nombreP" value=orden.Usuario.nombre)
+                          input(type="hidden" name="codigoP" value=orden.Usuario.id)  
+                          input(type="hidden" name="documentoP" value=orden.Usuario.documento) 
+                          input(type="hidden" name="fechaP" value=orden.createdAt) 
+                          input(type="submit" value="Imprimir" class="btn btn-primary")
+          tfoot
+            tr
+              th Orden
+              th Usuario
+              th Estado
+              th Médico
+              th Diagnóstico
+              th
+              
+      
+      script(src="https://code.jquery.com/jquery-3.7.0.js") 
+      script(src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js")         
+      script. 
+        new DataTable('#example'); 
