@@ -48,21 +48,26 @@ const getListaOrden=async()=>{
           include: [
             { model: Usuario },
             { model: Estado },
-            { model: Resultado, include: [ // Agregar la inclusión de Determinacion
-            {
-              model: Determinacion,include:[{ model:ValorReferencia }]
-            }
-          ]},
+            
+          
             { model: ExamenOrden,
               include: [
                 {
                   model: Examen,
                   include: [
                     {
-                      model: ExamenDeterminacion
-                     
-                      
+                      model: ExamenDeterminacion,
+                      include: [
+                        {
+                          model: Determinacion,
+                          include: [
+                            { model: ValorReferencia },
+                            { model: Resultado }
+                          ]
+                        }
+                      ]
                     }
+                    
                   ]
                 }
               ]

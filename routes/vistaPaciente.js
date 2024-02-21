@@ -35,19 +35,38 @@ router.get('/imprimir',async(req,res)=>{
 
     //const ordenes = await getOrdenPacientePorId( parametroRecibido);
         const orde = await getOrdenPacientePorIdes( parametroRecibido);
+
         const ordenes=[];
         const result=[];
+        let i =0;
+        const exam=[];
    // const result=await listaDeResultado(parametroRecibido);
 
+   orde.ExamenOrdens.forEach(examen=>{
+exam.push(examen);
   
-  
+});
+
+/*
 orde.Resultados.forEach(resultado => {
-   
+
+
+
    const determinacion = resultado.Determinacion;
    result.push(resultado);
    ordenes.push(determinacion);
-   const valorref=ordenes[0].dataValues.ValorReferencia[0].valorMaximo;
-   console.log(result,"auxilio");
+   let valorref="";
+   if(ordenes[i].dataValues.ValorReferencia[i]!=null)
+   {console.log("hola");
+    valorref=ordenes[i].dataValues.ValorReferencia[i].valorMaximo;
+    i++;
+   }
+   else{
+   // ordenes[i].dataValues.ValorReferencia[i].valorMaximo=0;
+   //valorref.push("0");
+   i++;
+   }
+
     //const valorReferencia = determinacion.dataValues.ValorReferencia;
     // Aquí puedes acceder a los atributos de la determinación
     //console.log(valorReferencia);
@@ -55,15 +74,20 @@ orde.Resultados.forEach(resultado => {
    // console.log(determinacion.dataValues.nombre);
     //console.log(determinacion);
 });
+*/
 
-
-
-    res.render('paciente/resultados',{result,ordenes,orde});
+    //console.log(exam[0].ExamenDeterminacions[0],"cabeza");
+    //const determinacion = exam[0].Examen.ExamenDeterminacions[0].Determinacion.dataValues.ValorReferencia;
+   // console.log(exam[0].Examen.ExamenDeterminacions[0].Determinacion.dataValues.Resultados[0].valor);
+    
+    
+    res.render('paciente/resultados',{result,ordenes,orde,exam});
 })
 
 
 
 //-----------------------------------------------------------------------------------------------
+
 
 
 

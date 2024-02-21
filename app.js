@@ -48,6 +48,7 @@ app.use('/vistaGestionUsers',[validarJWT,tieneRole('Administrativo')],require('.
 //apartir de aca estoy trabajando 
 
 
+
 //--------------------------------------------------------------------------------
 //LADO DEL PACIENTE 
 app.use('/',require('./routes/login'))

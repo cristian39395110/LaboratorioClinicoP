@@ -1,51 +1,76 @@
-head 
-  link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous")
-  link(href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet")  
-  link(href="https://cdn.datatables.net/buttons/2.3.0/css/buttons.dataTables.min.css" rel="stylesheet")     
-  title   Doctor #{orde.medico}
+head
+  link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN", crossorigin="anonymous")
+  link(href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css", rel="stylesheet")
+  link(href="https://cdn.datatables.net/buttons/2.3.0/css/buttons.dataTables.min.css", rel="stylesheet")
+  title Doctor #{orde.medico}
   link(rel='stylesheet', href='/stylesheets/navbar.css')
+
 body
-  img.imagen-centrada(src='/img/nombreLab.png', alt='Titulo') 
-  
+  img.imagen-centrada(src='/img/nombreLab.png', alt='Titulo')
+
   .container
     include navBar.pug
+    
     h1 Doctor #{orde.medico}
+   
     h5 Diagnostico: #{orde.diagnostico}
+
     .container 
-      table#example.display(style="width:100%")
-        thead
-          tr
-            th Nombre
-            th Valor Ref Minimo 
-            th Valor Ref Maximo 
-            th Resultado
-          
-        if ordenes
+      each ex in exam
+        h3= ex.Examen.nombre
+        table.display(style="width:100%")
+          thead
+            tr
+              th Nombre
+              th Valor Ref Minimo 
+              th Valor Ref Maximo 
+              th Resultado
           tbody
-            each orden in ordenes
-              each valorref in orden.dataValues.ValorReferencia
-                each res in result
-                  tr
-                    td= orden.nombre
-                    td= valorref.valorMinimo
-                    td= valorref.valorMaximo
-                    td= res.valor+" "+ orden.unidadMedida
-        
-      script(src="https://code.jquery.com/jquery-3.7.0.js") 
-      script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous")
-      script(src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js")   
-      script(src="https://cdn.datatables.net/buttons/2.3.0/js/dataTables.buttons.min.js")    
-      script(src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js")
-      script(src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js")
-      script(src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js")
-      script(src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js")
-      script(src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js")
-      script.
-        $(document).ready(function() {
-          $('#example').DataTable( {
-            dom: 'Bfrtip',
-            buttons: [
-              'pdf', 'print' // Solo se incluyen los botones de descargar PDF e imprimir
-            ]
-          } );
-        });
+            each determinacion in ex.Examen.ExamenDeterminacions
+              tr
+                td= determinacion.Determinacion.dataValues.nombre
+                if determinacion.Determinacion.dataValues.ValorReferencia.length == 0
+                  td No se encuentra
+                  td No se encuentra
+                  if determinacion.Determinacion.dataValues.Resultados.length > 0
+                    td= determinacion.Determinacion.dataValues.Resultados[0].valor + " " + determinacion.Determinacion.dataValues.unidadMedida
+                  else
+                    td 0
+                else
+                  each valorref in determinacion.Determinacion.dataValues.ValorReferencia
+                    each resul in determinacion.Determinacion.dataValues.Resultados
+                      td= valorref.valorMaximo
+                      td= valorref.valorMinimo
+                      td= resul.valor + " " + determinacion.Determinacion.dataValues.unidadMedida
+
+  script(src="https://code.jquery.com/jquery-3.7.0.js")
+  script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js", integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL", crossorigin="anonymous")
+  script(src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js")
+  script(src="https://cdn.datatables.net/buttons/2.3.0/js/dataTables.buttons.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js")
+  script(src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js")
+  script(src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js")
+  script.
+    $(document).ready(function() {
+      $('table.display').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+          {
+            extend: 'pdfHtml5',
+            text: 'Descargar PDF',
+            exportOptions: {
+              columns: ':visible'
+            }
+          },
+          {
+            extend: 'print',
+            text: 'Imprimir',
+            exportOptions: {
+              columns: ':visible'
+            }
+          }
+        ]
+      });
+    });
