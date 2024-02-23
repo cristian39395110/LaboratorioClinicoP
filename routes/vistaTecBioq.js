@@ -1,11 +1,12 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-
+const{getOrdenPacientePorIdes } = require('../controllers/orden');
 const { detGet, detPost, detGetTodas, activarDeterminacion, desactivarDeterminacion } = require('../controllers/determinaciones');
 const { tipoMuestrasGet, postMuestra, getVistaMuestra, activarMuestra, desactivarMuestra, muestrasGetTodos } = require('../controllers/muestras');
 const router = Router();
-const { ValorReferencia,Auditoria} = require("../models");
+const { ValorReferencia,Auditoria,Orden} = require("../models");
 const { tipoExamenesGet } = require('../controllers/tipoexamen');
+const { getOrdenes } = require('../controllers/orden');
 const { tieneOrden, examenesGet, examenPost, putExamen, activarExamen, examenesGetTodos, desactivarExamen } = require('../controllers/examenes');
 const { postValorRef, refGetTodos, activarRef, desactivarRef, crearArregloValorRefyId } = require('../controllers/valorreferencia');
 const {  procesarBody2 } = require('../middlewares/formExamen');
@@ -13,18 +14,56 @@ const { validarCampos0 } = require('../middlewares/validar-campos');
 const { detValorRef } = require('../controllers/funciones/validaciones');
 
 
-router.get('/inicio', (req, res) => { 
+router.get('/inicio', async (req, res) => { 
   const soyAdministrativo=req.usuario.Rols.some(element => element.nombre==='Administrativo')
-  res.render("tecnicoBioq/inicio", { modal: false ,soyAdministrativo}) })
-//router.get('/inicio',(req,res)=>{res.render("inicioAdmin2/inicioAdmin2")})
+  const ordenes=await getOrdenes(['Informada','Esperando toma de muestra','Analitica']);
+    
+
+
+
+  res.render("tecnicoBioq/inicio", { modal: true ,soyAdministrativo,ordenes}) })
+
 
 router.get('/addet', async (req, res) => {
   return res.render("tecnicoBioq/formdeterminacion", { modal: false })
 })
+//-----------------------------------------------------------------------------------------------------------------
+
+router.get('/llenarResultados', async (req, res) => {
+  const parametroRecibido=req.query.ordenId;
+
+
+      const orde = await getOrdenPacientePorIdes( parametroRecibido);
+
+      const ordenes=[];
+      const result=[];
+      let i =0;
+      const exam=[];
+ 
+
+ orde.ExamenOrdens.forEach(examen=>{
+exam.push(examen);
+
+});
+res.render('tecnicoBioq/prueba',{result,ordenes,orde,exam});
+});
+
+//-------------------------------------------------------------------------------------------
+
+router.post('/ingresarResultados', async function(req, res) {
+
+  const ordenId = req.query.ordenId; // Accede al ID de la orden desde req.body
+  const determinacionIds = req.query.determinacionIds; // Accede a los IDs de las determinaciones desde req.body
+  //console.log(ordenId, "orden");
+  console.log(req.query, "query");
+
+console.log(req.body, "bpdy");
 
 
 
 
+});
+//------------------------------------------------------------------------------------------------------------------------------------------
 router.get('/activarDeterminacion', async (req, res) => {
   const determinaciones = await detGetTodas()
   res.render('tecnicoBioq/activarDeter', { determinaciones })

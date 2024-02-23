@@ -1,75 +1,78 @@
-head 
-  link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous")
-  link(href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet")  
-  link(href="https://cdn.datatables.net/buttons/2.3.0/css/buttons.dataTables.min.css" rel="stylesheet")     
-  title   Doctor #{orde.medico}
+head
+  link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN", crossorigin="anonymous")
+  link(href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css", rel="stylesheet")
+  link(href="https://cdn.datatables.net/buttons/2.3.0/css/buttons.dataTables.min.css", rel="stylesheet")
+  title Doctor #{orde.medico}
   link(rel='stylesheet', href='/stylesheets/navbar.css')
+
 body
-  img.imagen-centrada(src='/img/nombreLab.png', alt='Titulo') 
-  
+  img.imagen-centrada(src='/img/nombreLab.png', alt='Titulo')
+
   .container
-    include navBar.pug
-    h1 Doctor #{ordenes.medico}
-    h1 Doctor #{orde.medico}
-    h5 Diagnostico: #{orde.diagnostico}
+    .d-none
+     include navBar.pug
+    include navBar.pug 
+    h3 Doctor #{orde.medico}   
+    h3 Orden N° #{orde.id} 
+    h3 Diagnostico: #{orde.diagnostico}
+
     .container 
-      table#example.display(style="width:100%")
-       
-        thead
-          tr
-            th Nombre
-            th Valor Ref Minimo 
-            th Valor Ref Maximo 
-            th Resultado
-           
-        
-        each ex in exam
-           
+      each ex in exam
+        h4= ex.Examen.nombre
+        table.display(style="width:100%")
+          thead
+            tr
+              th Nombre
+              th Valor Ref Minimo 
+              th Valor Ref Maximo 
+              th Resultado
+          tbody
             each determinacion in ex.Examen.ExamenDeterminacions
-              
-               if determinacion.Determinacion.dataValues.ValorReferencia.length==0
-               
-                  tr
-                   td= determinacion.Determinacion.dataValues.nombre
-                   td="no se encuentra"
-                   td= "no se encuentra"
-                   if determinacion.Determinacion.dataValues.Resultados.length > 0
-                     td= determinacion.Determinacion.dataValues.Resultados[0].valor + " " + determinacion.Determinacion.dataValues.unidadMedida
-                   else
-                     td 0
+              tr
+                td= determinacion.Determinacion.dataValues.nombre
+                if determinacion.Determinacion.dataValues.ValorReferencia.length == 0
+                  td No se encuentra
+                  td No se encuentra
+                  if determinacion.Determinacion.dataValues.Resultados.length > 0
+                    td 
+                      input(type="text", name=`resultados[${determinacion.id}]`, placeholder="Ingrese resultado")
                       
-               else
-                 each valorref in determinacion.Determinacion.dataValues.ValorReferencia
-                  each resul in determinacion.Determinacion.dataValues.Resultados
-                   tr
-                    td= determinacion.Determinacion.dataValues.nombre
-                    td= valorref.valorMaximo
-                    td= valorref.valorMinimo
-                    td= resul.valor+" "+determinacion.Determinacion.dataValues.unidadMedida
-                  
-        
-      script(src="https://code.jquery.com/jquery-3.7.0.js") 
-      script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous")
-      script(src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js")   
-      script(src="https://cdn.datatables.net/buttons/2.3.0/js/dataTables.buttons.min.js")    
-      script(src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js")
-      script(src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js")
-      script(src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js")
-      script(src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js")
-      script(src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js")
-      script.
-      
-        $(document).ready(function() {
-         
-         
-          $('#example').DataTable( {
-            dom: 'Bfrtip',
-            buttons: [
-              'pdf', 'print' // Solo se incluyen los botones de descargar PDF e imprimir
-            ]
-          } );
-        });
+                  else
+                    td 
+                      input(type="text", name=`resultados[${determinacion.id}]`, placeholder="Ingrese resultado")
+                     
+                else
+                  each valorref in determinacion.Determinacion.dataValues.ValorReferencia
+                    each resul in determinacion.Determinacion.dataValues.Resultados
+                      td= valorref.valorMaximo
+                      td= valorref.valorMinimo
+                      td 
+                        input(type="text", name=`resultados[${determinacion.id}]`, placeholder="Ingrese resultado")
+        form(action="/vistaTecBioq/ingresarResultados" method="get")
+          input(type="hidden" name="ordenId" value=orde.id)
+          each determinacion in ex.Examen.ExamenDeterminacions
+            input(type="hidden" name="determinacionIds[]" value=determinacion.Determinacion.id)
+          input(type="submit" value="Ver Resultados" class="btn btn-primary")
+
+
+
+  script(src="https://code.jquery.com/jquery-3.7.0.js")
+  script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js", integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL", crossorigin="anonymous")
+  script(src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js")
+  script(src="https://cdn.datatables.net/buttons/2.3.0/js/dataTables.buttons.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js")
+  script(src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js")
+  script(src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js")
+  script.
+    $(document).ready(function() {
+      $('table.display').DataTable({
        
+     
+      });
+    });
+  
 //---------------------------------------------------------------------------------------------------------------------------------------------
        router.get('/imprimir',async(req,res)=>{
     
@@ -123,3 +126,94 @@ orde.Resultados.forEach(resultado => {
     res.render('paciente/resultados',{result,ordenes,orde,exam});
 })
 
+input(type="text", name=`resultados[${determinacion.id}]`, placeholder="Ingrese resultado")
+
+
+
+
+
+
+
+
+head
+  link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN", crossorigin="anonymous")
+  link(href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css", rel="stylesheet")
+  link(href="https://cdn.datatables.net/buttons/2.3.0/css/buttons.dataTables.min.css", rel="stylesheet")
+  title Doctor #{orde.medico}
+  link(rel='stylesheet', href='/stylesheets/navbar.css')
+
+body
+  img.imagen-centrada(src='/img/nombreLab.png', alt='Titulo')
+
+  .container
+    .d-none
+     include navBar.pug
+    include navBar.pug 
+    h3 Doctor #{orde.medico}   
+    h3 Orden N° #{orde.id} 
+    h3 Diagnostico: #{orde.diagnostico}
+
+    .container 
+      each examen in exam
+        h4= examen.Examen.nombre
+        table.display(style="width:100%")
+          thead
+            tr
+              th Nombre
+              th Valor Ref Minimo 
+              th Valor Ref Maximo 
+              th Resultado
+          tbody
+            each determinacion in examen.Examen.ExamenDeterminacions
+              tr
+                td= determinacion.Determinacion.dataValues.nombre
+                - const valorReferencia = determinacion.Determinacion.dataValues.ValorReferencia[0] // Suponiendo que solo hay un valor de referencia por determinación
+                - const resultado = determinacion.Determinacion.dataValues.Resultados[0] // Suponiendo que solo hay un resultado por determinación
+                td= valorReferencia ? valorReferencia.valorMaximo : "No se encuentra"
+                td= valorReferencia ? valorReferencia.valorMinimo : "No se encuentra"
+                td
+                  - let resultadoUsuario = ""; // Inicializamos el resultado del usuario como una cadena vacía
+                  - if (resultado && !resultadoUsuario) { // Verificamos si hay un resultado recuperado y no hay un resultado de usuario definido
+                  -   resultadoUsuario = resultado.valor; // Asignamos el resultado recuperado a resultadoUsuario
+                  - }
+
+                  input(type="text", class="resultado-input", name="resultados[]", placeholder="Ingrese resultado", value=resultadoUsuario)
+
+                  input(type="hidden", name=`determinacionIds[${determinacion.Determinacion.id}]`, value=determinacion.Determinacion.id)
+        form(action="/vistaTecBioq/ingresarResultados" method="post")
+          input(type="hidden" name="ordenId" value=orde.id)
+          input(type="submit" value="Ver Resultados" class="btn btn-primary")
+          each determinacion in examen.Examen.ExamenDeterminacions
+             input(type="hidden", name=`resultados[${determinacion.Determinacion.id}]`, value=resultadoValor)
+
+
+
+  script(src="https://code.jquery.com/jquery-3.7.0.js")
+  script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js", integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL", crossorigin="anonymous")
+  script(src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js")
+  script(src="https://cdn.datatables.net/buttons/2.3.0/js/dataTables.buttons.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js")
+  script(src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js")
+  script(src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js")
+  script.
+   $(document).ready(function() {
+     $('table.display').DataTable();
+     $('form').submit(function() {
+       const resultados = {}; // Objeto para almacenar los resultados
+
+      $('.resultado-input').each(function() {
+       const determinacionId = $(this).data('determinacion-id');
+       const resultadoValor = $(this).val();
+       resultados[determinacionId] = resultadoValor; // Almacena el resultado en el objeto
+      });
+
+    // Agrega los resultados al formulario como campos ocultos
+       $.each(resultados, function(determinacionId, resultadoValor) {
+       $(this).after(`<input type="hidden" name="resultados[${determinacionId}]" value="${resultadoValor}">`);
+      });
+
+    return true; // Permitir el envío del formulario después de procesar los resultados
+    });  
+    });
