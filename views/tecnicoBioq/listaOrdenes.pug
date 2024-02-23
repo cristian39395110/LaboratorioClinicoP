@@ -39,7 +39,7 @@ html
                   td
                     form(action=`/examenes/eliminadoLogico/` method="post" onsubmit="return confirm('¿Realmente desea eliminar esta orden?')")
                           input(type="hidden" name="term" value=orden.id)
-                          input(type="submit" value="Eliminar" class="btn btn-danger")
+                         
                   td
                     form(action=`/orden/etiqueta` method="get" target="_blank")
                           input(type="hidden" name="orden" value=orden.id)
@@ -47,7 +47,7 @@ html
                           input(type="hidden" name="codigoP" value=orden.Usuario.id)  
                           input(type="hidden" name="documentoP" value=orden.Usuario.documento) 
                           input(type="hidden" name="fechaP" value=orden.createdAt) 
-                          input(type="submit" value="Imprimir" class="btn btn-primary")
+                          
           tfoot
             tr
               th Orden

@@ -30,8 +30,19 @@ const tieneRole=(...roles)=>{
        }
    
 }
+const tieneRoles=(...roles)=>{
+   return (req,res,next)=>{
 
+   if(!req.usuario.Rols.some(element => {
+      return roles.includes(element.nombre)
+   }))  
+   return  0
+   
+   else 1
+       }
+   
+}
 
 module.exports={
-   esAdminRol,tieneRole
+   esAdminRol,tieneRole,tieneRoles
 }

@@ -3,7 +3,25 @@ const {OrdenTrabajo,Determinacion,Usuario,Estado,Examen,ExamenOrden,Muestra,Audi
 
 //const { examenesGet } = require('./examenes');
 
+async function cambiarEstado(ordenTrabajoId, estado) {
+  try {
+    const orden= await OrdenTrabajo.findOne({ where: { id:ordenTrabajoId} });
+   
+      
+      await orden.update({ estadoId: estado}); 
+      console.log(` actualizado orden a pre-informe`);
+      return 1; 
+   
+  } catch (error) {
+    console.error("Error al insertar o actualizar el estado:", error);
+    return 0; 
+    
+  }
+ 
 
+
+
+}
 const ordenPost = async (req, res) => {
     try {
 
@@ -231,7 +249,7 @@ const prueba = async (req, res) => {
 };   
 
    module.exports={
-    ordenPost,ordenesGet,getOrdenes,ordenPostCris,eliminarorden ,getListaOrden,crearorden,prueba,getOrdenesPaciente,getOrdenPacientePorId,getOrdenPacientePorIdes
+    ordenPost,ordenesGet,getOrdenes,ordenPostCris,eliminarorden ,getListaOrden,crearorden,prueba,getOrdenesPaciente,getOrdenPacientePorId,getOrdenPacientePorIdes,cambiarEstado
   }
   
   

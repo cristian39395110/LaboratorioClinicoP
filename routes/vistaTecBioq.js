@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const{getOrdenPacientePorIdes } = require('../controllers/orden');
+const{getOrdenPacientePorIdes,cambiarEstado } = require('../controllers/orden');
 const { detGet, detPost, detGetTodas, activarDeterminacion, desactivarDeterminacion } = require('../controllers/determinaciones');
 const { tipoMuestrasGet, postMuestra, getVistaMuestra, activarMuestra, desactivarMuestra, muestrasGetTodos } = require('../controllers/muestras');
 const router = Router();
@@ -15,11 +15,16 @@ const { validarCampos0 } = require('../middlewares/validar-campos');
 const { detValorRef } = require('../controllers/funciones/validaciones');
 
 
-router.get('/inicio', async (req, res) => { 
-  const soyAdministrativo=req.usuario.Rols.some(element => element.nombre==='Administrativo')
-  const ordenes=await getOrdenes(['Informada','Esperando toma de muestra','Analitica']);
-    
 
+router.get('/inicio', async (req, res) => { 
+  const soyAdministrativo=req.usuario.Rols.some(element => element.nombre==='Tecnico');
+  let ordenes=[];
+  if( soyAdministrativo)
+  { ordenes=await getOrdenes(['Informada','Esperando toma de muestra','Analitica','Pre informe','Para validar']);}
+    else{
+       ordenes=await getOrdenes(['Pre informe','Para validar','Informada']);
+    }
+console.log(soyAdministrativo,"que valor tiene"); 
 
 
   res.render("tecnicoBioq/inicio", { modal: true ,soyAdministrativo,ordenes}) })
@@ -32,7 +37,8 @@ router.get('/addet', async (req, res) => {
 
 router.get('/llenarResultados', async (req, res) => {
   const parametroRecibido=req.query.ordenId;
-
+  const soyTecnico=req.usuario.Rols.some(element => element.nombre==='Tecnico');
+ 
 
       const orde = await getOrdenPacientePorIdes( parametroRecibido);
 
@@ -46,7 +52,12 @@ router.get('/llenarResultados', async (req, res) => {
 exam.push(examen);
 
 });
-res.render('tecnicoBioq/prueba',{result,ordenes,orde,exam});
+if(soyTecnico){
+res.render('tecnicoBioq/prueba',{result,ordenes,orde,exam,modal:false });
+}
+else{
+  res.render('tecnicoBioq/pruebab',{result,ordenes,orde,exam,modal:false });
+}
 });
 
 //-------------------------------------------------------------------------------------------
@@ -54,6 +65,23 @@ router.post('/ingresarResultados', async function(req, res) {
   const Resultados = req.body.resultados; // Accede al array de resultados desde req.body
   const determinacionIds = req.body.determinacionId; // Accede al array de IDs de determinaciones desde req.body
   const ordenId = req.body.ordenId; // Accede al ID de la orden desde req.body
+  let modal=false;
+  const parametroRecibido=ordenId;
+  let contador=0;
+  const soyTecnico=req.usuario.Rols.some(element => element.nombre==='Tecnico');
+  console.log(soyTecnico,"Estoy em ingresar REsultados");
+  const orde = await getOrdenPacientePorIdes( parametroRecibido);
+
+  const ordenes=[];
+  const result=[];
+  let i =0;
+  const exam=[];
+
+
+orde.ExamenOrdens.forEach(examen=>{
+exam.push(examen);
+
+});
 console.log(req.body,"req.body");  
 console.log(ordenId,"orden");
 console.log(determinacionIds,"determinacionIds");
@@ -63,11 +91,35 @@ console.log(Resultados,"Resultados");
    
     
     await llenarResultadoso(ordenId, determinacionIds[i], Resultados[i]);
+    if(Resultados[i]=="" || Resultados[i]==" ")
+     {
+      contador++;
+     }
     
   }
 
+ if (contador==0){
+   await cambiarEstado(ordenId,4)
  
-  res.send('Resultados ingresados correctamente');
+  }
+ else{
+  await cambiarEstado(ordenId,5)
+ }
+
+
+if(soyTecnico){ //
+  res.render('tecnicoBioq/prueba',{result,ordenes,orde,exam,modal:true });
+}
+else{
+  if (contador==0){
+    await cambiarEstado(ordenId,3)
+  
+   }
+  else{
+   await cambiarEstado(ordenId,5)
+  }
+  res.render('tecnicoBioq/pruebabimprimir',{result,ordenes,orde,exam,modal:true });
+}
 });
 
 //------------------------------------------------------------------------------------------------------------------------------------------

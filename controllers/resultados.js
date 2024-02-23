@@ -23,12 +23,12 @@ async function llenarResultadoso(ordenTrabajoId, determinacionId, valor) {
 
     if (resultadoExistente) {
       
-      await resultadoExistente.update({ valor: valor || '' }); 
+      await resultadoExistente.update({ valor: valor || null }); 
       console.log(`Resultado actualizado para orden de trabajo ${ordenTrabajoId} y determinación ${determinacionId}`);
       return 1; 
     } else {
 
-      const nuevoResultado = await Resultado.create({ ordenTrabajoId, determinacionId, valor: valor || '' }); 
+      const nuevoResultado = await Resultado.create({ ordenTrabajoId, determinacionId, valor: valor || null }); 
       console.log(`Nuevo resultado creado para orden de trabajo ${ordenTrabajoId} y determinación ${determinacionId}`);
       return 1;
     }
