@@ -4,8 +4,9 @@ const{getOrdenPacientePorIdes } = require('../controllers/orden');
 const { detGet, detPost, detGetTodas, activarDeterminacion, desactivarDeterminacion } = require('../controllers/determinaciones');
 const { tipoMuestrasGet, postMuestra, getVistaMuestra, activarMuestra, desactivarMuestra, muestrasGetTodos } = require('../controllers/muestras');
 const router = Router();
-const { ValorReferencia,Auditoria,Orden} = require("../models");
+const { ValorReferencia,Auditoria,Orden,Resultados} = require("../models");
 const { tipoExamenesGet } = require('../controllers/tipoexamen');
+const { llenarResultadoso } = require('../controllers/resultados');
 const { getOrdenes } = require('../controllers/orden');
 const { tieneOrden, examenesGet, examenPost, putExamen, activarExamen, examenesGetTodos, desactivarExamen } = require('../controllers/examenes');
 const { postValorRef, refGetTodos, activarRef, desactivarRef, crearArregloValorRefyId } = require('../controllers/valorreferencia');
@@ -49,20 +50,26 @@ res.render('tecnicoBioq/prueba',{result,ordenes,orde,exam});
 });
 
 //-------------------------------------------------------------------------------------------
-
 router.post('/ingresarResultados', async function(req, res) {
+  const Resultados = req.body.resultados; // Accede al array de resultados desde req.body
+  const determinacionIds = req.body.determinacionId; // Accede al array de IDs de determinaciones desde req.body
+  const ordenId = req.body.ordenId; // Accede al ID de la orden desde req.body
+console.log(req.body,"req.body");  
+console.log(ordenId,"orden");
+console.log(determinacionIds,"determinacionIds");
+console.log(Resultados,"Resultados");
+  
+  for (let i = 0; i < Resultados.length; i++) {
+   
+    
+    await llenarResultadoso(ordenId, determinacionIds[i], Resultados[i]);
+    
+  }
 
-  const ordenId = req.query.ordenId; // Accede al ID de la orden desde req.body
-  const determinacionIds = req.query.determinacionIds; // Accede a los IDs de las determinaciones desde req.body
-  //console.log(ordenId, "orden");
-  console.log(req.query, "query");
-
-console.log(req.body, "bpdy");
-
-
-
-
+ 
+  res.send('Resultados ingresados correctamente');
 });
+
 //------------------------------------------------------------------------------------------------------------------------------------------
 router.get('/activarDeterminacion', async (req, res) => {
   const determinaciones = await detGetTodas()
