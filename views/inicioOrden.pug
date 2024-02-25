@@ -1,5 +1,10 @@
-include navBar.pug   
+include navBar.pug  
+ 
+
+
+
 .container
+  
   if ok
     .contei
     include search.pug
@@ -9,7 +14,7 @@ include navBar.pug
   if j 
     .contein 
     include formularioEliminarOrden.pug
-    
+  
 script.
   let okas=#{ok};
   if (okas) {

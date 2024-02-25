@@ -1,5 +1,5 @@
 const{Router}=require('express');
-const {ordenPost,ordenesGet,eliminarorden,ordenPostCris,crearorden,prueba}=require('../controllers/orden');
+const {ordenPost,ordenesGet,eliminarorden,ordenPostCris,crearorden,prueba,getOrdenes}=require('../controllers/orden');
 
 const router=Router();
 /* 
@@ -35,8 +35,9 @@ router.get('/etiqueta', (req, res) => {
       fechaHora: fechaFormateada
     });
   });
-router.get('/', (req, res) => {
-    res.render('inicioOrden'); // Para Probar la pagina inicioOrdemn
+router.get('/',async (req, res) => {
+  const ordenes=await getOrdenes(['Informada','Esperando toma de muestra','Analitica']);
+  res.render("administrativo/listaOrdenes",{ordenes}) // Para Probar la pagina inicioOrdemn
   });
   router.get('/actualizar-orden', (req, res) => {
    const ok = true;
@@ -48,7 +49,8 @@ router.get('/', (req, res) => {
   router.get('/formulario', (req, res) => {
    console.log("holaa") ;
    const k=true;
-  res.render('inicioOrden',{k,ok:true})
+  
+  //res.render('inicioOrden',{k,ok:true})
   
   }); 
 

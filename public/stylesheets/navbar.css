@@ -44,8 +44,13 @@ img.inicio {
     top: 25%;
     transform: translateY(-17%);
 }
+h3 {
+    color: green;
+    text-align: center;
+    
+}
 #boton1{
-margin-left: 50%;
+margin-left: 40%;
 
 
 }

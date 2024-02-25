@@ -1,7 +1,7 @@
 const{Router}=require('express');
 const { Sequelize} = require('sequelize');
 const bcryptjs=require('bcryptjs');
-const { getOrdenes } = require('../controllers/orden');
+const { getOrdenes,cambiarEstado } = require('../controllers/orden');
 const {OrdenTrabajo,Usuario,Estado,Rol,Auditoria}=require('../models');
 const { getEstadoOrden } = require('../controllers/estadoOrden');
 const { check } = require('express-validator');
@@ -76,8 +76,45 @@ router.put('/editarPaciente',async(req,res)=>{
             await Usuario.update({nombre,apellido,documento,matricula,fechaNacimiento,genero,telefono,direccion,email,embarazo},{where:{id}})
             return res.render("gestionPacientes/inicio",{pacientes})
 })
+//-------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------
+router.put('/editarSoloEstado',async(req,res)=>{
+  
+    if(req.body.muestrasEntregadas!=null && req.body.muestrasTotal!=null)
+    {
+       if(req.body.muestrasEntregadas.length==req.body.muestrasTotal.length){
+        console.log("Analitica");
+        await cambiarEstado(req.body.id,1);
+       }else{console.log("falta muestra")
+       await cambiarEstado(req.body.id,2);}
+
+    }
+    else{
+        if(req.body.muestrasEntregadas=="" && req.body.muestrasTotal=="")
+        {
+         console.log("Analitica");
+         await cambiarEstado(req.body.id,1);
+        
+        }
+
+         else{
+            console.log("Esperandto toma");
+            await cambiarEstado(req.body.id,2);
+        }
+}
+const ordenes=await getOrdenes(['Informada','Esperando toma de muestra','Analitica']);
+res.render("administrativo/listaOrdenes",{ordenes})
+})
+
+//-------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------
+
 router.get('/editaras', async (req, res) => {
-    const { ordenId } = req.query;
+    const { ordenId } = req.query   ;
     const ordenTrabajoId = ordenId;  // Obtener ordenTrabajoId de req.query
 
     if (ordenId) {
@@ -86,11 +123,10 @@ router.get('/editaras', async (req, res) => {
         const estados = await getEstadoOrden();
         const muestras = await muestrasGetPorOrdenTrabajoId(req,res,ordenTrabajoId);
 
-        return res.render("administrativo/actualizar", { orden, estados, muestras });
+        return res.render("administrativo/actualizarcheck", { orden, estados, muestras });
     }
     return res.json({ p: "" });
 });
-
 
 
 

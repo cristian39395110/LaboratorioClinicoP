@@ -14,7 +14,7 @@ include navBar.pug
           - let str=""
           - if(examen.Determinacions)
             - for(let i=0;i<examen.Determinacions.length;i++)
-              - str= `${str}${str!==""?", ":""} ${examen.Determinacions[i].nombre}`
+              - str= `${str}${str!==""?", ":""} ${examen.nombre}`
           tr
             td= examen.nombre
             if examen.TipoMuestra 

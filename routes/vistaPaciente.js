@@ -22,7 +22,7 @@ router.get('', async(req,res)=>{
 
     const parametroRecibido = req.query.parametro;
 
-    const ordenes = await getOrdenesPaciente(['Informada', 'Esperando toma de muestra', 'Analitica'], parametroRecibido);
+    const ordenes = await getOrdenesPaciente(['Informada'], parametroRecibido);
     
     //const ordenes=await getOrdenes(['Informada','Esperando toma de muestra','Analitica']);
     res.render("paciente/vistaPaciente",{ordenes})
@@ -81,7 +81,7 @@ orde.Resultados.forEach(resultado => {
    // console.log(exam[0].Examen.ExamenDeterminacions[0].Determinacion.dataValues.Resultados[0].valor);
     
     
-    res.render('paciente/resultados',{result,ordenes,orde,exam});
+    res.render('paciente/resultados',{result,ordenes,orde,exam,modal:true});
 })
 
 
