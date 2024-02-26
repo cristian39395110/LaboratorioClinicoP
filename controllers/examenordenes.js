@@ -1,21 +1,17 @@
 
 const { ordenPostCris } = require('./orden');
-
+const {postMuestra}=require('./muestras');
 
 const { ExamenOrden,Muestra,Auditoria } = require('../models'); 
 const examenOrdenPost = async (req, res) => {
 const { OrdenTrabajoId,ExamenId,tipoMuestraId,entregada }=req.body;
-/*
-tipoMuestraId   Cuando una Usuario Elige un examen, tambien me devuelve 
-el tipoMuestraId para ho haacer la busqueda de vuelta
-entregada ;cuando buscan el examen  les sale los tipos de muestra que tiene que 
-entregar en el caso que le falte entregar la variable entregada viene en falso .
-*/
+
+
 let ordenId=OrdenTrabajoId;
    
 try { 
     const ex=await  ExamenOrden.create({OrdenTrabajoId,ExamenId});
-    await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'examenOrdenes',operacion:'insert',detalleAnterior:JSON.stringify(ex._previousDataValues),detalleNuevo:JSON.stringify(ex.dataValues)})
+    await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'examenOrdenes',operacion:'insert',detalleAnterior:null,detalleNuevo:JSON.stringify(ex.dataValues)})
       
     await Muestra.create({
     ordenId,
@@ -54,22 +50,27 @@ const prueba = async (req, res) => {
 
       // Inserta el registro en ExamenOrden
       await ExamenOrden.create({ OrdenTrabajoId:OrdenTrabajoId,ExamenId:ExamenId});
-
+      await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'examenOrdenes',operacion:'insert',detalleAnterior:null,detalleNuevo:JSON.stringify(ex.dataValues)})
      
      
       while (contadorEntregada < muestraE.length) {
-        await Muestra.create(
+       // await postMuestra(OrdenTrabajoId,req.body.muestrasEntregada[contadorEntregada].id,1)
+     
+       await Muestra.create(
           {
             ordenTrabajoId: OrdenTrabajoId,
             tipoMuestraId: req.body.muestrasEntregada[contadorEntregada].id,
             entregada:1,
           }
+          
           // Pasa la transacción
         );
+        
         contadorEntregada++;
       }
       while (contadorNoEntregada < muestraM.length) {
-        await Muestra.create(
+       // await postMuestra(OrdenTrabajoId,req.body.muestrasEntregada[contadorEntregada].id,1)
+       await Muestra.create(
           {
             ordenTrabajoId: OrdenTrabajoId,
             tipoMuestraId: req.body.muestrasNoEntregada[contadorNoEntregada].id,
@@ -77,6 +78,7 @@ const prueba = async (req, res) => {
           }
           // Pasa la transacción
         );
+        
         contadorNoEntregada++;
       }
     }
@@ -84,7 +86,7 @@ const prueba = async (req, res) => {
     // Confirma la transacción
   
 
-    console.log(para);
+    
     res.render("inicioOrden", { a: true ,k:false,j:true});
     
   } catch (error) {

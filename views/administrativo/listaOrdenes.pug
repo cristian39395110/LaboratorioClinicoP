@@ -8,9 +8,15 @@ html
       title Lista Ordenes 
       link(rel='stylesheet', href='/stylesheets/navbar.css')
     body
-      img.imagen-centrada(src='/img/nombreLab.png', alt='Titulo') 
+     
       .container
         include navBar.pug
+        //include navBar.pug
+      .container
+      form(action="/ordenes/dadas-de-baja" method="post")
+        .form-check
+          input.form-check-input(type="radio" id="mostrarDadasDeBaja" name="mostrar" value="dadas-de-baja" class="mr-3")
+          label.form-check-label(for="mostrarDadasDeBaja" id="loco")  Órdenes Dadas de Baja 
       .container 
         table#example.display(style="width:100%")
           thead

@@ -7,7 +7,7 @@ const {Determinacion,Resultado,ValorReferencia,Auditoria}=require("../models")
 const detGetTodas=async()=>{
     try {
         const determinaciones = await Determinacion.findAll( {paranoid:false});
-        console.log(determinaciones);
+        
         return determinaciones
       } catch (error) {
         console.error(error);
@@ -20,7 +20,7 @@ const detPost=async(req,res=response)=>{
         
         const {nombre,unidadMedida,valorMin,valorMax,comentarios}=req.body;
       const au=await Determinacion.create({nombre,unidadMedida,valorMin,valorMax,comentarios});
-      await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'determinaciones',operacion:'insert',detalleAnterior:JSON.stringify(au._previousDataValues),detalleNuevo:JSON.stringify(au.dataValues)})
+      await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'determinaciones',operacion:'insert',detalleAnterior:null,detalleNuevo:JSON.stringify(au.dataValues)})
         
       return res.render('tecnicoBioq/formDeterminacion',{modal:"Determinación agregada."})}
     catch{
@@ -34,7 +34,7 @@ const detPost=async(req,res=response)=>{
 const detPostidexamen=async(req,res=response)=>{
     try{ const {examenId,nombre,unidadMedida,valorMin,valorMax,comentarios}=req.body;
      const au=await Determinacion.create({nombre,unidadMedida,valorMin,valorMax,comentarios,examenId});
-     await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'determinaciones',operacion:'insert',detalleAnterior:JSON.stringify(au._previousDataValues),detalleNuevo:JSON.stringify(au.dataValues)})
+     await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'determinaciones',operacion:'insert',detalleAnterior:null,detalleNuevo:JSON.stringify(au.dataValues)})
       
      return res.json({msg:"Determinacion insertada en la DB Con su Examen"})}
    catch{
@@ -72,7 +72,13 @@ const activarDeterminacion=async(req,res)=>{
     await Determinacion.restore({where: {id}})
     await ValorReferencia.restore({ where: { determinacionId: id } });
     await Resultado.restore({ where: { determinacionId: id } }); 
-
+    await Auditoria.create({
+      usuarioId: req.usuario.id,
+      tablaAfectada: 'determinaciones',
+      operacion: 'activar',
+      detalleAnterior: null,
+      detalleNuevo: `Determinación activada: ${determinacion.nombre}`
+  });
       const determinaciones=await detGetTodas()
       res.render('tecnicoBioq/activarDeter',{determinaciones})
 
@@ -82,20 +88,17 @@ const activarDeterminacion=async(req,res)=>{
 const desactivarDeterminacion=async(req,res)=>{
     const{id}=req.body;
 
-    /* await ValorReferencia.destroy({ where: { determinacionId: id } });
-    await ValorReferencia.update(
-        { determinacionId: null },
-        { where: { determinacionId: id } }
-      );
-      
-    await Resultado.destroy({ where: { determinacionId: id } }); 
-    await Resultado.update(
-        { determinacionId: null },
-        { where: { determinacionId: id } }
-      );  */
+  
       await ValorReferencia.destroy({ where: { determinacionId: id } });
       await Resultado.destroy({ where: { determinacionId: id } }); 
       await Determinacion.destroy({where:{id}})
+      await Auditoria.create({
+        usuarioId: req.usuario.id,
+        tablaAfectada: 'determinaciones',
+        operacion: 'desactivar',
+        detalleAnterior: JSON.stringify(determinacion.dataValues),
+        detalleNuevo: null
+    });
       const determinaciones=await detGetTodas()
       res.render('tecnicoBioq/activarDeter',{determinaciones})
 

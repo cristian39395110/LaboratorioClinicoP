@@ -25,11 +25,25 @@ async function llenarResultadoso(ordenTrabajoId, determinacionId, valor) {
       
       await resultadoExistente.update({ valor: valor || null }); 
       console.log(`Resultado actualizado para orden de trabajo ${ordenTrabajoId} y determinación ${determinacionId}`);
+      await Auditoria.create({
+        usuarioId: req.usuario.id,
+        tablaAfectada: 'resultado',
+        operacion: 'update',
+        detalleAnterior: JSON.stringify(resultadoExistente.dataValues),
+        detalleNuevo: JSON.stringify({ valor: valor || null })
+      });
       return 1; 
     } else {
 
       const nuevoResultado = await Resultado.create({ ordenTrabajoId, determinacionId, valor: valor || null }); 
       console.log(`Nuevo resultado creado para orden de trabajo ${ordenTrabajoId} y determinación ${determinacionId}`);
+      await Auditoria.create({
+        usuarioId: req.usuario.id,
+        tablaAfectada: 'resultado',
+        operacion: 'insert',
+        detalleAnterior: null,
+        detalleNuevo: JSON.stringify(nuevoResultado.dataValues)
+      });
       return 1;
     }
   } catch (error) {

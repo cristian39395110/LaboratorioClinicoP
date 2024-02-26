@@ -3,32 +3,42 @@ const {OrdenTrabajo,Determinacion,Usuario,Estado,Examen,ExamenOrden,Muestra,Audi
 
 //const { examenesGet } = require('./examenes');
 
-async function cambiarEstado(ordenTrabajoId, estado) {
+async function cambiarEstado(ordenTrabajoId, estado, req) {
   try {
-    const orden= await OrdenTrabajo.findOne({ where: { id:ordenTrabajoId} });
+    // Buscar la orden de trabajo antes de la actualización
+    const ordenAnterior = await OrdenTrabajo.findOne({ where: { id: ordenTrabajoId } });
+
+    // Hacer una copia del estado anterior para enviarlo a la auditoría
+    const estadoAnterior = ordenAnterior.estadoId ;
+
+    // Actualizar la orden de trabajo con el nuevo estado
+    await ordenAnterior.update({ estadoId: estado });
+
+    // Crear un registro de auditoría
+    await Auditoria.create({
+      usuarioId: req.usuario.dataValues.id,
+      tablaAfectada: 'ordenestrabajo',
+      operacion: 'update',
+      detalleAnterior: JSON.stringify({ estadoId: estadoAnterior }),
+      detalleNuevo: JSON.stringify({ estadoId: estado })
+    });
+
    
-      
-      await orden.update({ estadoId: estado}); 
-      console.log(` actualizado orden a pre-informe`);
-      return 1; 
-   
+
+    return 1; // Éxito
   } catch (error) {
     console.error("Error al insertar o actualizar el estado:", error);
-    return 0; 
-    
+    return 0; // Fracaso
   }
- 
-
-
-
 }
+
 const ordenPost = async (req, res) => {
     try {
 
       const { usuarioId,medico, diagnostico,estadoId } = req.body;
 
       const ordenTrabajo = await OrdenTrabajo.create({ usuarioId,medico,diagnostico,estadoId});
-      await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'ordenTrabajo',operacion:'insert',detalleAnterior:JSON.stringify(ordenTrabajo._previousDataValues),detalleNuevo:JSON.stringify(ordenTrabajo.dataValues)})
+      await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'ordenTrabajo',operacion:'insert',detalleAnterior:null,detalleNuevo:JSON.stringify(ordenTrabajo.dataValues)})
         
       return res.status(201).json(ordenTrabajo);
     } catch (error) {  
@@ -117,7 +127,7 @@ const getListaOrden=async()=>{
     
 //................................................................................................................................................................................................
 const getOrdenes=async(arr)=>{
-  console.log(arr);
+ 
   if (arr){
     return await OrdenTrabajo.findAll({ include: [{model: Usuario},{model: Estado,where:{nombre:arr}}]});
   }
@@ -145,7 +155,7 @@ const ordenPostCris = async (req, res) => {
       }
   
     );
-    await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'ordentrabajos',operacion:'insert',detalleAnterior:JSON.stringify(ordenTrabajo._previousDataValues),detalleNuevo:JSON.stringify(ordenTrabajo.dataValues)})
+    await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'ordentrabajos',operacion:'insert',detalleAnterior:null,detalleNuevo:JSON.stringify(ordenTrabajo.dataValues)})
        
     return ordenTrabajo;
   } catch (error) {
@@ -168,10 +178,23 @@ const eliminarorden=async (req,res) => {
     }
   
 
+      const crearorden= async (req, res)=>{
+    try {
+        const examen=await Examen.findAll();
+        res.render('inicioOrden',{ok:false,k:true,examen1:examen}); 
+    } catch (error) {
+       const examen=[];
+        res.render('inicioOrden',{ok:false,k:true,examen1:examen}); 
+    }
+  
+
 }
+}
+
+
 const prueba = async (req, res) => {
   const para = req.body;
-  console.log(para);
+ 
   const muestraE = req.body.muestrasEntregada;
   const muestraM = req.body.muestrasNoEntregada;
   let contadorEntregada = 0;
@@ -193,7 +216,7 @@ const prueba = async (req, res) => {
 
       // Inserta el registro en ExamenOrden
       const e=await ExamenOrden.create({ OrdenTrabajoId:OrdenTrabajoId,ExamenId:ExamenId});
-      await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'examenordenes',operacion:'insert',detalleAnterior:JSON.stringify(e._previousDataValues),detalleNuevo:JSON.stringify(e.dataValues)})
+      await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'examenordenes',operacion:'insert',detalleAnterior:null,detalleNuevo:JSON.stringify(e.dataValues)})
         
      
      
@@ -206,7 +229,7 @@ const prueba = async (req, res) => {
           }
           // Pasa la transacciónx
         );
-        await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'muestras',operacion:'insert',detalleAnterior:JSON.stringify(m._previousDataValues),detalleNuevo:JSON.stringify(m.dataValues)})
+        await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'muestras',operacion:'insert',detalleAnterior:null,detalleNuevo:JSON.stringify(m.dataValues)})
         
         contadorEntregada++;
       }
@@ -219,7 +242,7 @@ const prueba = async (req, res) => {
           }
           // Pasa la transacción
         );
-        await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'muestras',operacion:'insert',detalleAnterior:JSON.stringify(m._previousDataValues),detalleNuevo:JSON.stringify(m.dataValues)})
+        await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'muestras',operacion:'insert',detalleAnterior:null,detalleNuevo:JSON.stringify(m.dataValues)})
        
         contadorNoEntregada++;
       }

@@ -67,6 +67,8 @@ const actualizar=async(req,res)=>{
       cantidad=await usuario.update({
       documento,genero,email,nombre,apellido,fechaNacimiento,telefono,direccion,embarazo
     });
+    
+      await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'usuario',operacion:'update',detalleAnterior:null,detalleNuevo:JSON.stringify(m.dataValues)})
     if(cantidad!=0){
         return res.render("inicioAdmin",{pacientes:null,modal:"El paciente ha sido Actualizado",errors:{}})
     }
@@ -82,7 +84,7 @@ const actualizar=async(req,res)=>{
 }
 
 const encontrar = async (req, res) => {
-  try {console.log("holo");
+  try {
     const termino = req.query.term; // Obtener el término de búsqueda desde la solicitud GET
     // Realiza una búsqueda de pacientes en la base de datos
     const pacientes = await Usuario.findAll({
@@ -171,14 +173,14 @@ const verificare = async (req, res) => {
 
     // Renderiza una vista llamada 'inicioAdmin' con los resultados de la búsqueda
     // y establece algunas variables de contexto como 'ok', 'pacientes', 'modal' y 'errors'
-    console.log(pacientes[0].id);
+  
     const data={
       id:pacientes[0].id,
       documento:pacientes[0].documento,
       nombre:pacientes[0].nombre
 
     };
-    console.log(data);
+   
     return res.json(data);
   } catch (err) {
     // Si ocurre un error durante la búsqueda, renderiza la vista 'inicioAdmin' con un mensaje de error

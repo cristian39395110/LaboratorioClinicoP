@@ -1,5 +1,6 @@
 const {TipoMuestra,Muestra,OrdenTrabajo,Auditoria}=require("../models");
 const { ordenesGet, getListaOrden } = require("./orden");
+const { Op } = require('sequelize');
 
 
 const tipoMuestrasGet=async()=>{
@@ -14,15 +15,53 @@ try {
 
 
 }
+// Función para obtener el ID de un tipo de muestra dado su nombre
+// Función para obtener el ID de un tipo de muestra dado su nombre
+const obtenerTipoMuestraId = async (nombreTipoMuestra) => {
+  const tipoMuestra = await TipoMuestra.findOne({ where: { nombre: nombreTipoMuestra } });
+  if (tipoMuestra) {
+    console.log(tipoMuestra,"que hay en el id tipo de muestra");
+    return tipoMuestra.id;
+  } else {
+    throw new Error(`Tipo de muestra '${nombreTipoMuestra}' no encontrado`);
+  }
+};
 
+const actualizarMuestras = async (res, ordenTrabajoId, muestrasMarcadas, muestrasTotal) => {
+  console.log(Array.isArray(muestrasMarcadas));
+  try {
+      // Verificar si hay muestras marcadas
+      if (Array.isArray(muestrasMarcadas) && muestrasMarcadas.length > 0) {
+          console.log("Hay muestras marcadas");
+          const muestrasMarcadasIds = [];
+          for (const muestraMarcada of muestrasMarcadas) {
+              const tipoMuestraId = await obtenerTipoMuestraId(muestraMarcada);
+              muestrasMarcadasIds.push(tipoMuestraId);
+              await Muestra.update({ entregada: 1 }, { where: { 
+                ordenTrabajoId, 
+                tipoMuestraId: tipoMuestraId 
+            }});
+          }
+        
+      } else {
+          console.log("No hay muestras marcadas, actualizando todas como no entregadas");
+          await Muestra.update({ entregada: 0 }, { where: { ordenTrabajoId } });
+      }
+
+      //res.status(200).json({ message: "Muestras actualizadas correctamente" });
+  } catch (error) {
+      console.error("Error al actualizar las muestras:");
+      //res.status(500).json({ error: "Hubo un error al actualizar las muestras" });
+  }
+};
 
 const postMuestra=async(req,res)=>{
-    console.log("--------------------------");
-       console.log(req.body);
+   
+       
        const{ordenTrabajoId,tipoMuestraId}=req.body
        const entregada=req.body.entregada?true:false;
        const m=await Muestra.create({ordenTrabajoId,tipoMuestraId,entregada})
-       await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'muestras',operacion:'insert',detalleAnterior:JSON.stringify(m._previousDataValues),detalleNuevo:JSON.stringify(m.dataValues)})
+       await Auditoria.create({usuarioId:req.usuario.id,tablaAfectada:'muestras',operacion:'insert',detalleAnterior:null,detalleNuevo:JSON.stringify(m.dataValues)})
         
        const tipoM= await tipoMuestrasGet();
         const ordenes= await getListaOrden();
@@ -44,6 +83,14 @@ const muestrasGetTodos=async()=>{
 const activarMuestra=async(req,res)=>{
     const{id}=req.body;
     await Muestra.restore({where:{id}}) 
+    const muestra = await Muestra.findByPk(id);
+    await Auditoria.create({
+        usuarioId: req.usuario.id,
+        tablaAfectada: 'muestras',
+        operacion: 'activar',
+        detalleAnterior: null,
+        detalleNuevo: JSON.stringify(muestra.dataValues)
+    });
     const muestras=await muestrasGetTodos();
     res.render('tecnicoBioq/activarMuestra',{muestras})
 }
@@ -54,14 +101,18 @@ const desactivarMuestra=async(req,res)=>{
     const{id}=req.body;
 
     await Muestra.destroy({ where: { id } });
-    
+    await Auditoria.create({
+      usuarioId: req.usuario.id,
+      tablaAfectada: 'muestras',
+      operacion: 'desactivar',
+      detalleAnterior: null,
+      detalleNuevo: JSON.stringify(muestra.dataValues)
+  });
     let muestras=await muestrasGetTodos();      
     res.render('tecnicoBioq/activarMuestra',{muestras})
 }
 const muestrasGetPorOrdenTrabajoId = async (req,res,ordenTrabajoId) => {
-    console.log(req);
-    
-    console.log(ordenTrabajoId,"caca");
+  
     try {
       // Paso 1: Obtener los tipos de muestra asociados al ordenTrabajoId
       const tiposMuestraAsociados = await TipoMuestra.findAll({
@@ -99,5 +150,5 @@ const muestrasGetPorOrdenTrabajoId = async (req,res,ordenTrabajoId) => {
     }
   };
 module.exports={
-   tipoMuestrasGet,postMuestra,getVistaMuestra,activarMuestra,desactivarMuestra,muestrasGetTodos,muestrasGetPorOrdenTrabajoId
+   tipoMuestrasGet,postMuestra,getVistaMuestra,activarMuestra,desactivarMuestra,muestrasGetTodos,muestrasGetPorOrdenTrabajoId,actualizarMuestras
 }

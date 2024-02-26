@@ -1,5 +1,5 @@
-const{Router}=require('express');
-const {ordenPost,ordenesGet,eliminarorden,ordenPostCris,crearorden,prueba,getOrdenes}=require('../controllers/orden');
+  const{Router}=require('express');
+const {ordenPost,ordenesGet,eliminarorden,ordenPostCris,crearorden,prueba,getOrdenes,actualizarMuestras}=require('../controllers/orden');
 
 const router=Router();
 /* 

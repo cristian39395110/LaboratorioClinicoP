@@ -8,13 +8,19 @@ const { check } = require('express-validator');
 const { validarCampos0 } = require('../middlewares/validar-campos');
 const { usuarioExiste, emailExiste, compararPass, nuevaPassCheck } = require('../controllers/funciones/validaciones');
 const { listaDePacientes } = require('../controllers/pacientes');
-const {muestrasGetPorOrdenTrabajoId}=require('../controllers/muestras');
+const {muestrasGetPorOrdenTrabajoId,actualizarMuestras}=require('../controllers/muestras');
+const {getAuditoria}=require('../controllers/auditoria');
 
 
 
 const router=Router()
 
+router.get('/auditorias',async (req,res) => {
+    const auditorias=await getAuditoria(req,res);
+ 
+res.render("administrativo/auditorias",{auditorias});
 
+})
 
 router.get('/listaOrdenes', async(req,res)=>{
     /*Actualización de Orden de Trabajo (siempre y cuando todavía este en los estado "ingresada" y "esperando toma de muestra" y "Analítica") */
@@ -80,29 +86,46 @@ router.put('/editarPaciente',async(req,res)=>{
 //-------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------
 router.put('/editarSoloEstado',async(req,res)=>{
-  
-    if(req.body.muestrasEntregadas!=null && req.body.muestrasTotal!=null)
+    let muestrasEntregadas=req.body.muestrasEntregadas;
+   
+    if (typeof muestrasEntregadas === 'string') {
+        if (!muestrasEntregadas.includes(',')) {
+            muestrasEntregadas = [muestrasEntregadas];
+        } else {
+            // Aquí puedes convertir la cadena separada por comas en un arreglo
+            muestrasEntregadas = muestrasEntregadas.split(',');
+        }
+    }
+    
+   
+ 
+    if(muestrasEntregadas!=null && req.body.muestrasTotal!=null)
     {
-       if(req.body.muestrasEntregadas.length==req.body.muestrasTotal.length){
-        console.log("Analitica");
-        await cambiarEstado(req.body.id,1);
-       }else{console.log("falta muestra")
-       await cambiarEstado(req.body.id,2);}
+       if(muestrasEntregadas.length==req.body.muestrasTotal.length){
+      
+        await cambiarEstado(req.body.id,1,req);
+   
+       }else{
+       
+       await cambiarEstado(req.body.id,2,req);}
 
     }
     else{
-        if(req.body.muestrasEntregadas=="" && req.body.muestrasTotal=="")
+        if(muestrasEntregadas=="" && req.body.muestrasTotal=="")
         {
-         console.log("Analitica");
-         await cambiarEstado(req.body.id,1);
+        
+           
+         await cambiarEstado(req.body.id,1,req);
         
         }
 
          else{
-            console.log("Esperandto toma");
-            await cambiarEstado(req.body.id,2);
+            
+           
+            await cambiarEstado(req.body.id,2,req);
         }
 }
+await actualizarMuestras(req,req.body.id,muestrasEntregadas,req.body.muestrasTotal);
 const ordenes=await getOrdenes(['Informada','Esperando toma de muestra','Analitica']);
 res.render("administrativo/listaOrdenes",{ordenes})
 })
