@@ -42,6 +42,29 @@ body
                                     td
                                         input(type="text" class="resultado-input" name= `resultados` placeholder="Ingrese resultado", value=resultado ? resultado.valor : "")
                                         input(type="hidden" name="determinacionId" value=determinacion.Determinacion.id)
+                                        input(type="hidden" name="minDet" value=determinacion.Determinacion.valorMin)
+                                        input(type="hidden" name="maxDet" value=determinacion.Determinacion.valorMax)
+                                        script.
+                                            const resultadoInput = this.querySelector('.resultado-input');
+                                            const minDet = parseFloat("#{determinacion.Determinacion.valorMin}");
+                                            const maxDet = parseFloat("#{determinacion.Determinacion.valorMax}");
+
+                                            console.log('resultadoInput:', resultadoInput);
+                                            console.log('minDet:', minDet);
+                                            console.log('maxDet:', maxDet);
+
+                                            resultadoInput.addEventListener('change', function() {
+                                                console.log('Change event triggered');
+                                                const valor = parseFloat(resultadoInput.value);
+                                                console.log('valor:', valor);
+                                                if (isNaN(valor) || valor < minDet || valor > maxDet) {
+                                                    resultadoInput.style.color = 'red'; // Cambiar el color del texto a rojo
+                                                    alert('El valor ingresado está fuera de los límites.');
+                                                    resultadoInput.focus();
+                                                } else {
+                                                    resultadoInput.style.color = ''; // Restaurar el color del texto
+                                                }
+                                            });
                 input(type="submit" value="Guardar Resultados" class="boton1 btn btn-primary")  
                 input(type="submit" id="botonV" value="Validar" class="boton1 btn btn-primary")  
                 
@@ -75,11 +98,25 @@ body
             $('table.display').DataTable({
                 searching: false,
                 paging: false
-
             });
 
+            $('.resultado-input').on('change', function() {
+                var valor = parseFloat($(this).val());
+                var valorMinimo = parseFloat($(this).closest('tr').find('td:nth-child(3)').text());
+                var valorMaximo = parseFloat($(this).closest('tr').find('td:nth-child(2)').text());
+
+                if (isNaN(valor) || valor < valorMinimo || valor > valorMaximo) {
+                    $(this).css('color', 'red'); // Cambiar el color del texto a rojo
+                    alert('El valor ingresado está fuera de los límites.');
+                    $(this).focus();
+                } else {
+                    $(this).css('color', ''); // Restaurar el color del texto
+                }
+            });
 
             if(#{modal}) {
                 $('#exampleModal').modal('show');
             }
         });
+
+        

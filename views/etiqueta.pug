@@ -5,58 +5,35 @@ html(lang="en")
     title Etiqueta
     style.
       body {
-        
-        width: 4cm;
-        height: 2cm;
-        margin: 0;
-        padding: 0;
         font-family: Arial, sans-serif;
       }
       .etiqueta-container {
-        width: 100%;
-        height: 100%;   
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        text-align: center;
+        width: 8cm; /* Ancho de la etiqueta */
+        height: auto; /* Altura ajustada automáticamente */
+        background-color: #f0f0f0; /* Color de fondo */
+        border: 2px solid #ccc; /* Borde */
+        border-radius: 8px; /* Borde redondeado */
+        padding: 8px; /* Espacio interior */
+        margin-bottom: 16px; /* Espacio entre etiquetas */
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.1); /* Sombra */
+        display: flex; /* Diseño de caja flexible */
+        flex-direction: column; /* Dirección de los elementos hijos */
+        justify-content: center; /* Centrar verticalmente */
+        align-items: center; /* Centrar horizontalmente */
+      }
+      h1 {
+        font-size: 18px; /* Tamaño del título */
+        margin-bottom: 4px; /* Espacio inferior */
+      }
+      p {
+        margin: 2px 0; /* Espacio entre párrafos */
       }
   body
-    .etiqueta-container
-      .etiqueta-content
-        h1 Nº de orden: #{numeroOrden}
-        p Código de persona: #{codigoPersona}
-        p Nombre: #{nombre}
-        p Documento del paciente: #{documentoPaciente}
-        p Fecha y Hora: #{fechaHora}
-      .button-container
-        button(id="imprimirButton") Imprimir
-        button(id="cancelar") Cancelar 
-      
- 
-  script.
-     
-     document.getElementById("imprimirButton").addEventListener("click", function() {
-      hideButtons();
-     window.print();
-     
-     });
-     function hideButtons() {
-      const buttonContainer = document.querySelector(".button-container");
-      buttonContainer.style.display = "none";
-    }
-
-    window.addEventListener("beforeprint", function() {
-      hideButtons();
-    });
-    document.getElementById("cancelar").addEventListener("click", function() {
-       window.location.href = '/orden'; 
-     
-     });
-
-
-
-
-
-
-
+    - for (let i = 0; i < codigoPersona.length; i++)
+      .etiqueta-container
+        .etiqueta-content
+          h1 Nº de orden: #{numeroOrden}
+          p Analisis: #{codigoPersona[i]}
+          p Nombre: #{nombre}
+          p Documento del paciente: #{documentoPaciente}
+          p Fecha y Hora: #{fechaHora}

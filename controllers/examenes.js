@@ -316,6 +316,31 @@ const eliminadoLogico = async (req, res) => {
 };
 
 
+const recuperadoLogico = async (req, res) => {
+  const ordenId = req.body.ordenId;  
+  console.log(ordenId,"que pasooooo");
+  try {
+      // Verifica si la orden existe antes de intentar recuperarla
+      const orden = await OrdenTrabajo.findOne({ where: { id: ordenId } });
+
+      if (!orden) {
+          return res.status(404).json({ error: 'Orden no encontrada' });
+      }
+
+      // Realiza la recuperación lógica eliminando el campo `deletedAt`
+      await OrdenTrabajo.update({ deletedAt: null }, { where: { id: ordenId } });
+      
+      // Envía una respuesta exitosa
+      const ordenes = await getOrdenes(['Informada','Esperando toma de muestra','Analitica']);
+      res.render("administrativo/listaOrdenes", { ordenes });
+  } catch (error) {
+      console.error('Error al recuperar la orden:', error);
+      return res.status(500).json({ error: 'Error en el servidor' });
+  }
+};
+
+
+
 module.exports={
-   examenesGet,examenPost,tieneOrden,crearorden,cargarmuestras,putExamen,eliminadoLogico,eliminarorden,activarExamen,examenesGetTodos,desactivarExamen
+   examenesGet,examenPost,tieneOrden,crearorden,cargarmuestras,putExamen,eliminadoLogico,eliminarorden,activarExamen,examenesGetTodos,desactivarExamen,recuperadoLogico
   }

@@ -61,66 +61,63 @@ else{
 });
 
 //-------------------------------------------------------------------------------------------
-router.post('/ingresarResultados', async function(req, res) {
-  const Resultados = req.body.resultados; // Accede al array de resultados desde req.body
-  const determinacionIds = req.body.determinacionId; // Accede al array de IDs de determinaciones desde req.body
-  const ordenId = req.body.ordenId; // Accede al ID de la orden desde req.body
-  let modal=false;
-  const parametroRecibido=ordenId;
-  let contador=0;
-  const soyTecnico=req.usuario.Rols.some(element => element.nombre==='Tecnico');
-  console.log(soyTecnico,"Estoy em ingresar REsultados");
-  const orde = await getOrdenPacientePorIdes( parametroRecibido);
+  router.post('/ingresarResultados', async function(req, res) {
+    const Resultados = req.body.resultados; // Accede al array de resultados desde req.body
+    const determinacionIds = req.body.determinacionId; // Accede al array de IDs de determinaciones desde req.body
+    const ordenId = req.body.ordenId; // Accede al ID de la orden desde req.body
+    let modal=false;
+    const parametroRecibido=ordenId;
+    let contador=0;
+    const soyTecnico=req.usuario.Rols.some(element => element.nombre==='Tecnico');
+    console.log(soyTecnico,"Estoy em ingresar REsultados");
+    const orde = await getOrdenPacientePorIdes( parametroRecibido);
 
-  const ordenes=[];
-  const result=[];
-  let i =0;
-  const exam=[];
+    const ordenes=[];
+    const result=[];
+    let i =0;
+    const exam=[];
 
 
-orde.ExamenOrdens.forEach(examen=>{
-exam.push(examen);
+  orde.ExamenOrdens.forEach(examen=>{
+  exam.push(examen);
 
-});
-console.log(req.body,"req.body");  
-console.log(ordenId,"orden");
-console.log(determinacionIds,"determinacionIds");
-console.log(Resultados,"Resultados");
-  
-  for (let i = 0; i < Resultados.length; i++) {
-   
-    
-    await llenarResultadoso(ordenId, determinacionIds[i], Resultados[i]);
-    if(Resultados[i]=="" || Resultados[i]==" ")
-     {
-      contador++;
-     }
-    
-  }
-
- if (contador==0){
-   await cambiarEstado(ordenId,4)
+  });
  
-  }
- else{
-  await cambiarEstado(ordenId,5)
- }
+    
+    for (let i = 0; i < Resultados.length; i++) {
+    
+      
+      await llenarResultadoso(ordenId, determinacionIds[i], Resultados[i]);
+      if(Resultados[i]=="" || Resultados[i]==" ")
+      {
+        contador++;
+      }
+      
+    }
 
-
-if(soyTecnico){ //
-  res.render('tecnicoBioq/prueba',{result,ordenes,orde,exam,modal:true });
-}
-else{
   if (contador==0){
-    await cambiarEstado(ordenId,3)
+    await cambiarEstado(ordenId,4)
   
-   }
+    }
   else{
-   await cambiarEstado(ordenId,5)
+    await cambiarEstado(ordenId,5)
   }
-  res.render('tecnicoBioq/pruebabimprimir',{result,ordenes,orde,exam,modal:true });
-}
-});
+
+
+  if(soyTecnico){ //
+    res.render('tecnicoBioq/prueba',{result,ordenes,orde,exam,modal:true });
+  }
+  else{
+    if (contador==0){
+      await cambiarEstado(ordenId,3)
+    
+    }
+    else{
+    await cambiarEstado(ordenId,5)
+    }
+    res.render('tecnicoBioq/pruebabimprimir',{result,ordenes,orde,exam,modal:true });
+  }
+  });
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 router.get('/activarDeterminacion', async (req, res) => {

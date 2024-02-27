@@ -1,6 +1,7 @@
 const { Sequelize} = require('sequelize');
-const {OrdenTrabajo,Determinacion,Usuario,Estado,Examen,ExamenOrden,Muestra,Auditoria,Resultado,ExamenDeterminacion,ValorReferencia}=require('../models');
-
+const {Options} = require('sequelize');
+const {OrdenTrabajo,Determinacion,Usuario,Estado,Examen,ExamenOrden,Muestra,Auditoria,Resultado,ExamenDeterminacion,ValorReferencia,TipoMuestra}=require('../models');
+const {Op}=require('sequelize');
 //const { examenesGet } = require('./examenes');
 
 async function cambiarEstado(ordenTrabajoId, estado, req) {
@@ -115,7 +116,7 @@ const getListaOrden=async()=>{
     const getOrdenPacientePorId = async (id) => {
       try {
         const orden = await OrdenTrabajo.findByPk(id, {
-          include: [{ model: Usuario }, { model: Estado }],
+          include: [{ model: Usuario }, { model: Estado },{model:Muestra,include:[{model:TipoMuestra}]}],
         });
     
         return orden; // Puede ser null si no se encuentra ninguna orden con el ID especificado
@@ -129,11 +130,32 @@ const getListaOrden=async()=>{
 const getOrdenes=async(arr)=>{
  
   if (arr){
-    return await OrdenTrabajo.findAll({ include: [{model: Usuario},{model: Estado,where:{nombre:arr}}]});
+    return await OrdenTrabajo.findAll({ include: [{model: Usuario},{model: Estado,where:{nombre:arr}},{model:Muestra,include:[{model:TipoMuestra}]}]});
   }
    
-  return await OrdenTrabajo.findAll({ include: [{model: Usuario},{model: Estado}]});
+  return await OrdenTrabajo.findAll({ include: [{model: Usuario},{model: Estado},{model:Muestra,include:[{model:TipoMuestra}]}]});
 }
+const getOrdenesDelet = async (arr) => {
+  let whereClause = {};
+
+  if (arr) {
+    whereClause = { [Op.not]: null };
+  }
+
+  try {
+    const ordenes = await OrdenTrabajo.findAll({
+      where: { deletedAt: whereClause },
+      paranoid: false, // Esto permite incluir registros eliminados lógicamente
+      include: [{ model: Usuario }, { model: Estado, where: { nombre: arr } }]
+    });
+    return ordenes;
+  } catch (error) {
+    console.error('Error al obtener las órdenes:', error);
+    throw new Error('Error al obtener las órdenes');
+  }
+}
+
+
 const ordenPostCris = async (req, res) => {
   let estadoId = 0;
   const muesE = req.body.muestrasEntregada;
@@ -272,7 +294,7 @@ const prueba = async (req, res) => {
 };   
 
    module.exports={
-    ordenPost,ordenesGet,getOrdenes,ordenPostCris,eliminarorden ,getListaOrden,crearorden,prueba,getOrdenesPaciente,getOrdenPacientePorId,getOrdenPacientePorIdes,cambiarEstado
+    ordenPost,ordenesGet,getOrdenes,ordenPostCris,eliminarorden ,getListaOrden,crearorden,prueba,getOrdenesPaciente,getOrdenPacientePorId,getOrdenPacientePorIdes,cambiarEstado,getOrdenesDelet
   }
   
   

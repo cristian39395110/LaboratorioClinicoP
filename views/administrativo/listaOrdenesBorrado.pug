@@ -12,11 +12,7 @@ html
       .container
         include navBar.pug
         //include navBar.pug
-      .container
-       form(action=`/orden/obtenerOrdenesDadasDeBaja` method="post")
-        .form-check
-          input.form-check-input(type="radio" id="mostrarDadasDeBaja" name="mostrar" value="dadas-de-baja" class="mr-3")
-          label.form-check-label(for="mostrarDadasDeBaja" id="loco")  Órdenes Dadas de Baja 
+     
       .container 
         table#example.display(style="width:100%")
           thead
@@ -27,8 +23,8 @@ html
               th Medico
               th Diagnostico
               th
-              th
-              th
+              
+              
           if ordenes
             tbody
               each orden in ordenes
@@ -39,21 +35,11 @@ html
                   td= orden.medico
                   td= orden.diagnostico
                   td 
-                    form(action=`/vistaAdmin/editaras` method="get")
+                    form(action=`/examenes/recuperadoLogico` method="post")
                           input(type="hidden" name="ordenId" value=orden.id)
-                          input(type="submit" value="Editar" class="btn btn-primary")
-                  td
-                    form(action=`/examenes/eliminadoLogico` method="post" onsubmit="return confirm('¿Realmente desea eliminar esta orden?')")
-                          input(type="hidden" name="term" value=orden.id)
-                          input(type="submit" value="Eliminar" class="btn btn-danger")
-                  td
-                    form(action=`/orden/etiqueta` method="get" target="_blank")
-                          input(type="hidden" name="orden" value=orden.id)
-                          input(type="hidden" name="nombreP" value=orden.Usuario.nombre)
-                          input(type="hidden" name="codigoP" value=orden.Usuario.id)  
-                          input(type="hidden" name="documentoP" value=orden.Usuario.documento) 
-                          input(type="hidden" name="fechaP" value=orden.createdAt) 
-                          input(type="submit" value="Imprimir" class="btn btn-primary")
+                          input(type="submit" value="Recuperar" class="btn btn-primary")
+                
+            
           tfoot
             tr
               th Orden

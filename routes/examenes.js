@@ -1,5 +1,5 @@
 const{Router}=require('express');
-const {examenesGet,examenPost, tieneOrden,crearorden,cargarmuestras,eliminarorden,eliminadoLogico}=require('../controllers/examenes');
+const {examenesGet,examenPost, tieneOrden,crearorden,cargarmuestras,eliminarorden,eliminadoLogico,recuperadoLogico}=require('../controllers/examenes');
 
 const router=Router();
 
@@ -11,6 +11,7 @@ router.get('/crearorden',crearorden);
 router.post('/cargarmuestras',cargarmuestras);
 router.get('/eliminarorden',eliminarorden);
 router.post('/eliminadoLogico',eliminadoLogico);
+router.post('/recuperadoLogico',recuperadoLogico);
 
 
 
